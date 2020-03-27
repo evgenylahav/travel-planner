@@ -12,10 +12,21 @@ Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 The page will reload if you make edits.<br />
 You will also see any lint errors in the console.
 
+### `yarn start-api`
+
+In a separate terminal window this runs the flask server in the development mode.<br />
+
+The page will reload if you make edits.<br />
+You will also see any lint errors in the console.
+
 ### `yarn test`
 
 Launches the test runner in the interactive watch mode.<br />
 See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+
+### `yarn test-api`
+
+Executes the server side tests.<br />
 
 ### `yarn build`
 
