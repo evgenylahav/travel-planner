@@ -1,5 +1,4 @@
 import React from "react";
-import { makeStyles } from "@material-ui/core/styles";
 import Stepper from "@material-ui/core/Stepper";
 import Step from "@material-ui/core/Step";
 import StepLabel from "@material-ui/core/StepLabel";
@@ -15,162 +14,181 @@ import {
   participants
 } from "../../../resources/constants";
 
-const classes = require('./configurationPage.scss');
+import { getSteps, getStepContent } from "./utils";
 
-const useStyles = makeStyles(theme => ({
-  root: {
-    width: "100%"
-  },
-  button: {
-    marginTop: theme.spacing(1),
-    marginRight: theme.spacing(1)
-  },
-  actionsContainer: {
-    marginBottom: theme.spacing(2)
-  },
-  resetContainer: {
-    padding: theme.spacing(3)
-  }
-}));
+const classes = require("./configurationPage.scss");
 
-function getSteps() {
-  return [
-    "Who is travelling?",
-    "What type of a trip do you prefer?",
-    "What would be the length of your trip?"
-  ];
+export interface ConfigurationProps {}
+
+export interface ConfigurationState {
+  activeStep: number;
+  participants: string;
+  tripType: string;
+  tripLength: string;
+  timeUnits: string;
 }
 
-function getStepContent(step: number) {
-  switch (step) {
-    case 0:
-      return `Select the participants of your planned trip - a family with children,
-              a solo traveller, a couple, group of friends, etc...`;
-    case 1:
-      return `Select the type of the trip you would like to have - urban, nature, 
-              backpacking, skiing, etc...`;
-    case 2:
-      return `Select the length of your trip. Don't worry - it doesn't have to be
-              exact.`;
-    default:
-      return "Unknown step";
+export class Configuration extends React.Component<
+  ConfigurationProps,
+  ConfigurationState
+> {
+  constructor(props: ConfigurationProps, state: ConfigurationState) {
+    super(props, state);
+    this.state = {
+      activeStep: 0,
+      participants: "",
+      tripType: "",
+      tripLength: "",
+      timeUnits: "",
+    };
   }
-}
 
-function getStepMenu(step: number) {
-  switch (step) {
-    case 0:
-      return (
-        <Autocomplete
-          id="combo-box-demo"
-          options={participants}
-          getOptionLabel={option => option.value}
-          style={{ width: 300 }}
-          renderInput={params => (
-            <TextField {...params} label="Participants" variant="outlined" />
-          )}
-        />
-      );
-    case 1:
-      return (
-        <Autocomplete
-          id="combo-box-demo"
-          options={tripType}
-          getOptionLabel={option => option.value}
-          style={{ width: 300 }}
-          renderInput={params => (
-            <TextField {...params} label="Trip type" variant="outlined" />
-          )}
-        />
-      );
-    case 2:
-      return (
-        <div style={{ display: "flex" }}>
-          <TextField
-            id="standard-number"
-            label="Trip Length"
-            type="number"
-            InputLabelProps={{
-              shrink: true
-            }}
-            style={{ marginRight: "10px" }}
-          />
-          <Autocomplete
-            id="combo-box-demo"
-            options={tripLength}
-            getOptionLabel={option => option.value}
-            style={{ width: 300 }}
-            renderInput={params => (
-              <TextField {...params} label="Days / Weeks" variant="outlined" />
-            )}
-          />
-        </div>
-      );
-    default:
-      return "Unknown step";
+  getStepMenu = (step: number) => {
+    switch (step) {
+      case 0:
+        return (
+          <div style={{ marginBottom: "10px" }}>
+            <Autocomplete
+              id="combo-box-demo"
+              options={participants}
+              getOptionLabel={option => option.value}
+              style={{ width: 300 }}
+              renderInput={params => (
+                <TextField
+                  {...params}
+                  label="Participants"
+                  variant="outlined"
+                />
+              )}
+              onChange={ (e: any, v: any, r: any) => this.setState({ participants: v.value }) }
+            />
+          </div>
+        );
+      case 1:
+        return (
+          <div style={{ marginBottom: "10px" }}>
+            <Autocomplete
+              id="combo-box-demo"
+              options={tripType}
+              getOptionLabel={option => option.value}
+              style={{ width: 300 }}
+              renderInput={params => (
+                <TextField {...params} label="Trip type" variant="outlined" />
+              )}
+              onChange={ (e: any, v: any, r: any) => this.setState({ tripType: v.value }) }
+            />
+          </div>
+        );
+      case 2:
+        return (
+          <div style={{ display: "flex", marginBottom: "10px" }}>
+            <TextField
+              id="standard-number"
+              label="Trip Length"
+              type="number"
+              InputLabelProps={{
+                shrink: true
+              }}
+              style={{ marginRight: "10px" }}
+              onChange={ (e: any) => this.setState({ tripLength: e.target.value + " " + this.state.timeUnits }) }
+            />
+            <Autocomplete
+              id="combo-box-demo"
+              options={tripLength}
+              getOptionLabel={option => option.value}
+              style={{ width: 300 }}
+              renderInput={params => (
+                <TextField
+                  {...params}
+                  label="Days / Weeks"
+                  variant="outlined"
+                />
+              )}
+              onChange={ (e: any, v: any, r: any) => this.setState({ timeUnits: v.value }) }
+            />
+          </div>
+        );
+      default:
+        return "Unknown step";
+    }
+  };
+
+  handleNext = () => {
+    this.setState({ activeStep: this.state.activeStep + 1 });
+  };
+
+  handleBack = () => {
+    this.setState({ activeStep: this.state.activeStep - 1 });
+  };
+
+  handleReset = () => {
+    this.setState({ activeStep: 0 });
+  };
+
+  findTrip = () => {
+      const req = {
+          participants: this.state.participants,
+          tripType: this.state.tripType,
+          tripLength: this.state.tripLength,
+      };
+      console.log(req);
   }
-}
 
-export function Configuration() {
-  const classes = useStyles();
-  const [activeStep, setActiveStep] = React.useState(0);
-  const steps = getSteps();
-
-  const handleNext = () => {
-    setActiveStep(prevActiveStep => prevActiveStep + 1);
-  };
-
-  const handleBack = () => {
-    setActiveStep(prevActiveStep => prevActiveStep - 1);
-  };
-
-  const handleReset = () => {
-    setActiveStep(0);
-  };
-
-  return (
-    <div className={classes.root}>
-      <Stepper activeStep={activeStep} orientation="vertical">
-        {steps.map((label, index) => (
-          <Step key={label}>
-            <StepLabel>{label}</StepLabel>
-            <StepContent>
-              <Typography>{getStepContent(index)}</Typography>
-              {getStepMenu(index)}
-              <div className={classes.actionsContainer}>
-                <div>
-                  <Button
-                    disabled={activeStep === 0}
-                    onClick={handleBack}
-                    className={classes.button}
-                  >
-                    Back
-                  </Button>
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={handleNext}
-                    className={classes.button}
-                  >
-                    {activeStep === steps.length - 1 ? "Finish" : "Next"}
-                  </Button>
+  render() {
+    const { activeStep } = this.state;
+    const steps = getSteps();
+    return (
+      <div className={classes.root}>
+        <Stepper activeStep={activeStep} orientation="vertical">
+          {steps.map((label, index) => (
+            <Step key={label}>
+              <StepLabel>{label}</StepLabel>
+              <StepContent>
+                <Typography
+                  className={classes.typography}
+                  style={{ marginBottom: "10px" }}
+                >
+                  {getStepContent(index)}
+                </Typography>
+                {this.getStepMenu(index)}
+                <div className={classes.actionsContainer}>
+                  <div>
+                    <Button
+                      disabled={activeStep === 0}
+                      onClick={this.handleBack}
+                      className={classes.button}
+                    >
+                      Back
+                    </Button>
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      onClick={this.handleNext}
+                      className={classes.button}
+                    >
+                      {activeStep === steps.length - 1 ? "Finish" : "Next"}
+                    </Button>
+                  </div>
                 </div>
-              </div>
-            </StepContent>
-          </Step>
-        ))}
-      </Stepper>
-      {activeStep === steps.length && (
-        <Paper square elevation={0} className={classes.resetContainer}>
-          <Typography>
-            All steps completed - you&apos;re finished. Let&apos;s find a trip
-            for you.
-          </Typography>
-          <Button onClick={handleReset} className={classes.button}>
-            Reset
-          </Button>
-        </Paper>
-      )}
-    </div>
-  );
+              </StepContent>
+            </Step>
+          ))}
+        </Stepper>
+        {activeStep === steps.length && (
+          <Paper square elevation={0} className={classes.resetContainer}>
+            <Typography style={{ marginBottom: "10px" }}>
+              All steps completed - you&apos;re finished. Let&apos;s find a trip
+              for you.
+            </Typography>
+            <Button onClick={this.findTrip} className={classes.button} variant="contained" color="primary">
+              Find me a Trip
+            </Button>
+            <Button onClick={this.handleReset} className={classes.button}>
+              Reset
+            </Button>
+          </Paper>
+        )}
+      </div>
+    );
+  }
 }
