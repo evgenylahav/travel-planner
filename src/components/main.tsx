@@ -1,9 +1,9 @@
 import React from "react";
-import { Configuration } from './pages/configuration'
+import { Switch, Route } from "react-router-dom";
+import { Configuration } from "./pages/configuration";
+import { Landing } from "./pages/landing";
 
-export type MainProps = {
-  currentTime: number;
-};
+export interface MainProps {}
 
 export class Main extends React.Component<MainProps, {}> {
   constructor(props: MainProps, state: any) {
@@ -11,12 +11,11 @@ export class Main extends React.Component<MainProps, {}> {
   }
 
   render() {
-    const { currentTime } = this.props;
     return (
-      <header className="App-header">
-        <p>The current time is: {currentTime}</p>
-        <Configuration />
-      </header>
+      <Switch>
+        <Route exact path="/" component={Landing} />
+        <Route path="/configuration" component={Configuration} />
+      </Switch>
     );
   }
 }

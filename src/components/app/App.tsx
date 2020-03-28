@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { Main } from './components/main';
+import { Main } from '../main';
 
-function App() {
+export function App() {
   const [currentTime, setCurrentTime] = useState(0);
   
   useEffect(() => {
@@ -13,9 +13,7 @@ function App() {
   }, []);
   return (
     <div className="App">
-      <Main currentTime={currentTime}/>
+      <Main />
     </div>
   );
 }
-
-export default App;
