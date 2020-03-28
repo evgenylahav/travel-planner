@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import Stepper from "@material-ui/core/Stepper";
 import Step from "@material-ui/core/Step";
 import StepLabel from "@material-ui/core/StepLabel";
@@ -39,7 +40,7 @@ export class Configuration extends React.Component<
       participants: "",
       tripType: "",
       tripLength: "",
-      timeUnits: "",
+      timeUnits: ""
     };
   }
 
@@ -60,7 +61,9 @@ export class Configuration extends React.Component<
                   variant="outlined"
                 />
               )}
-              onChange={ (e: any, v: any, r: any) => this.setState({ participants: v.value }) }
+              onChange={(e: any, v: any, r: any) =>
+                this.setState({ participants: v.value })
+              }
             />
           </div>
         );
@@ -75,7 +78,9 @@ export class Configuration extends React.Component<
               renderInput={params => (
                 <TextField {...params} label="Trip type" variant="outlined" />
               )}
-              onChange={ (e: any, v: any, r: any) => this.setState({ tripType: v.value }) }
+              onChange={(e: any, v: any, r: any) =>
+                this.setState({ tripType: v.value })
+              }
             />
           </div>
         );
@@ -90,7 +95,11 @@ export class Configuration extends React.Component<
                 shrink: true
               }}
               style={{ marginRight: "10px" }}
-              onChange={ (e: any) => this.setState({ tripLength: e.target.value + " " + this.state.timeUnits }) }
+              onChange={(e: any) =>
+                this.setState({
+                  tripLength: e.target.value + " " + this.state.timeUnits
+                })
+              }
             />
             <Autocomplete
               id="combo-box-demo"
@@ -104,7 +113,9 @@ export class Configuration extends React.Component<
                   variant="outlined"
                 />
               )}
-              onChange={ (e: any, v: any, r: any) => this.setState({ timeUnits: v.value }) }
+              onChange={(e: any, v: any, r: any) =>
+                this.setState({ timeUnits: v.value })
+              }
             />
           </div>
         );
@@ -126,13 +137,13 @@ export class Configuration extends React.Component<
   };
 
   findTrip = () => {
-      const req = {
-          participants: this.state.participants,
-          tripType: this.state.tripType,
-          tripLength: this.state.tripLength,
-      };
-      console.log(req);
-  }
+    const req = {
+      participants: this.state.participants,
+      tripType: this.state.tripType,
+      tripLength: this.state.tripLength
+    };
+    console.log(req);
+  };
 
   render() {
     const { activeStep } = this.state;
@@ -180,7 +191,14 @@ export class Configuration extends React.Component<
               All steps completed - you&apos;re finished. Let&apos;s find a trip
               for you.
             </Typography>
-            <Button onClick={this.findTrip} className={classes.button} variant="contained" color="primary">
+            <Button
+              component={Link}
+              to="/itinerary"
+              onClick={this.findTrip}
+              className={classes.button}
+              variant="contained"
+              color="primary"
+            >
               Find me a Trip
             </Button>
             <Button onClick={this.handleReset} className={classes.button}>

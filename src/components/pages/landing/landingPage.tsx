@@ -23,14 +23,15 @@ export class Landing extends React.Component<LandingProps, LandingState> {
           variant="contained"
           color="primary"
           className={classes.button}
+          style={{ marginRight: "10px" }}
         >
           Guided
         </Button>
         <Button
           component={Link}
-          to="/new/location/"
+          to="/itinerary"
           variant="contained"
-          color="primary"
+          color="secondary"
           className={classes.button}
         >
           Manual
