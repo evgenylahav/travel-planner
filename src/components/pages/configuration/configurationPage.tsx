@@ -15,29 +15,45 @@ import {
   participants
 } from "../../../resources/constants";
 
+// import { RootState } from '../../../reducers';
+
 import { getSteps, getStepContent } from "./utils";
+
+import { connect } from 'react-redux';
+import { updateParticipants } from '../../../actions/configActions';
 
 const classes = require("./configurationPage.scss");
 
-export interface ConfigurationProps {}
+export interface ConfigurationStoreProps {
+  participants: string;
+}
+
+export interface ConfigurationDispatchProps {
+  handleUpdateParticipants: (participants: string) => void;
+}
+
+export interface ConfigurationOwnProps {}
+
+export type ConfigurationProps =
+  ConfigurationStoreProps
+  & ConfigurationDispatchProps
+  & ConfigurationOwnProps;
 
 export interface ConfigurationState {
   activeStep: number;
-  participants: string;
   tripType: string;
   tripLength: string;
   timeUnits: string;
 }
 
-export class Configuration extends React.Component<
-  ConfigurationProps,
+class ConfigurationInternal extends React.Component<
+ConfigurationProps,
   ConfigurationState
-> {
+  > {
   constructor(props: ConfigurationProps, state: ConfigurationState) {
     super(props, state);
     this.state = {
       activeStep: 0,
-      participants: "",
       tripType: "",
       tripLength: "",
       timeUnits: ""
@@ -61,9 +77,7 @@ export class Configuration extends React.Component<
                   variant="outlined"
                 />
               )}
-              onChange={(e: any, v: any, r: any) =>
-                this.setState({ participants: v.value })
-              }
+              onChange={(e: any, v: any, r: any) => this.props.handleUpdateParticipants(v.value)}
             />
           </div>
         );
@@ -138,7 +152,7 @@ export class Configuration extends React.Component<
 
   findTrip = () => {
     const req = {
-      participants: this.state.participants,
+      participants: this.props.participants,
       tripType: this.state.tripType,
       tripLength: this.state.tripLength
     };
@@ -210,3 +224,19 @@ export class Configuration extends React.Component<
     );
   }
 }
+
+function mapStateToProps(state: any): ConfigurationStoreProps {
+  const configState = state.config;
+  return {
+    participants: configState.participants,
+  };
+}
+
+function mapActionToProps(dispatch: any) {
+  return {
+    handleUpdateParticipants: (s: string) => dispatch(updateParticipants(s))
+  };
+}
+
+export const Configuration = 
+connect<ConfigurationStoreProps, ConfigurationDispatchProps, ConfigurationOwnProps>(mapStateToProps, mapActionToProps)(ConfigurationInternal);

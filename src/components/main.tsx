@@ -1,6 +1,6 @@
 import React from "react";
 import { Switch, Route } from "react-router-dom";
-import { Configuration } from "./pages/configuration";
+import { Configuration } from "./pages/configuration/configurationPage";
 import { Landing } from "./pages/landing";
 import { Itinerary } from "./pages/itinerary";
 
