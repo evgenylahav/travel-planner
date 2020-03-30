@@ -1,13 +1,13 @@
-import { UPDATE_CONFIGURATION } from '../actions';
+import { UPDATE_PLACES } from '../actions';
 import { INITIAL_STATE } from './reducers';
 
 
 export default (state = INITIAL_STATE, action: any) => {
   switch (action.type) {
-    case UPDATE_CONFIGURATION: {
+    case UPDATE_PLACES: {
       return {
         ...state,
-        request: action.payload
+        places: action.payload
       };
     }
     default:

@@ -1,9 +1,10 @@
-import { UPDATE_PARTICIPANTS } from '.';
+import { UPDATE_CONFIGURATION } from '.';
+import { ConfigurationRequest } from '../reducers/interfaces';
 
-export const updateParticipants = (request: string) => {
-    console.log("I'm inside updateParticipants")
+
+export const updateConfigurationRequest = (request: ConfigurationRequest) => {
     return {
-        type: UPDATE_PARTICIPANTS,
+        type: UPDATE_CONFIGURATION,
         payload: request
     }
 }

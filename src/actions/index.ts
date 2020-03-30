@@ -1,1 +1,5 @@
-export const UPDATE_PARTICIPANTS = "UPDATE_PARTICIPANTS";
+// configuration
+export const UPDATE_CONFIGURATION = "UPDATE_CONFIGURATION";
+
+// places
+export const UPDATE_PLACES = "UPDATE_PLACES"

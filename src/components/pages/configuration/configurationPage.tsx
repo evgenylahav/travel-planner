@@ -7,32 +7,26 @@ import StepContent from "@material-ui/core/StepContent";
 import Button from "@material-ui/core/Button";
 import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
-import TextField from "@material-ui/core/TextField";
-import Autocomplete from "@material-ui/lab/Autocomplete";
-import {
-  tripType,
-  tripLength,
-  participants
-} from "../../../resources/constants";
 
 // import { RootState } from '../../../reducers';
 
-import { getSteps, getStepContent } from "./utils";
+import { getSteps, getStepContent, getStepMenu } from "./configurationUtils";
 
 import { connect } from 'react-redux';
-import { updateParticipants } from '../../../actions/configActions';
+import { updateConfigurationRequest } from '../../../actions/configActions';
+import { ConfigurationRequest } from "../../../reducers/interfaces";
 
 const classes = require("./configurationPage.scss");
 
 export interface ConfigurationStoreProps {
-  participants: string;
+  request: ConfigurationRequest;
 }
 
 export interface ConfigurationDispatchProps {
-  handleUpdateParticipants: (participants: string) => void;
+  handleUpdateConfigurationRequest: (request: ConfigurationRequest) => void;
 }
 
-export interface ConfigurationOwnProps {}
+export interface ConfigurationOwnProps { }
 
 export type ConfigurationProps =
   ConfigurationStoreProps
@@ -41,102 +35,24 @@ export type ConfigurationProps =
 
 export interface ConfigurationState {
   activeStep: number;
-  tripType: string;
-  tripLength: string;
   timeUnits: string;
 }
 
 class ConfigurationInternal extends React.Component<
-ConfigurationProps,
+  ConfigurationProps,
   ConfigurationState
   > {
   constructor(props: ConfigurationProps, state: ConfigurationState) {
     super(props, state);
     this.state = {
       activeStep: 0,
-      tripType: "",
-      tripLength: "",
-      timeUnits: ""
+      timeUnits: "days"
     };
   }
 
-  getStepMenu = (step: number) => {
-    switch (step) {
-      case 0:
-        return (
-          <div style={{ marginBottom: "10px" }}>
-            <Autocomplete
-              id="combo-box-demo"
-              options={participants}
-              getOptionLabel={option => option.value}
-              style={{ width: 300 }}
-              renderInput={params => (
-                <TextField
-                  {...params}
-                  label="Participants"
-                  variant="outlined"
-                />
-              )}
-              onChange={(e: any, v: any, r: any) => this.props.handleUpdateParticipants(v.value)}
-            />
-          </div>
-        );
-      case 1:
-        return (
-          <div style={{ marginBottom: "10px" }}>
-            <Autocomplete
-              id="combo-box-demo"
-              options={tripType}
-              getOptionLabel={option => option.value}
-              style={{ width: 300 }}
-              renderInput={params => (
-                <TextField {...params} label="Trip type" variant="outlined" />
-              )}
-              onChange={(e: any, v: any, r: any) =>
-                this.setState({ tripType: v.value })
-              }
-            />
-          </div>
-        );
-      case 2:
-        return (
-          <div style={{ display: "flex", marginBottom: "10px" }}>
-            <TextField
-              id="standard-number"
-              label="Trip Length"
-              type="number"
-              InputLabelProps={{
-                shrink: true
-              }}
-              style={{ marginRight: "10px" }}
-              onChange={(e: any) =>
-                this.setState({
-                  tripLength: e.target.value + " " + this.state.timeUnits
-                })
-              }
-            />
-            <Autocomplete
-              id="combo-box-demo"
-              options={tripLength}
-              getOptionLabel={option => option.value}
-              style={{ width: 300 }}
-              renderInput={params => (
-                <TextField
-                  {...params}
-                  label="Days / Weeks"
-                  variant="outlined"
-                />
-              )}
-              onChange={(e: any, v: any, r: any) =>
-                this.setState({ timeUnits: v.value })
-              }
-            />
-          </div>
-        );
-      default:
-        return "Unknown step";
-    }
-  };
+  handleUpdateTimeUnits = (timeUnits: string) => {
+    this.setState({ timeUnits: timeUnits });
+  } 
 
   handleNext = () => {
     this.setState({ activeStep: this.state.activeStep + 1 });
@@ -148,15 +64,20 @@ ConfigurationProps,
 
   handleReset = () => {
     this.setState({ activeStep: 0 });
+    this.props.handleUpdateConfigurationRequest({
+      participants: "",
+      tripType: "",
+      tripLength: 0
+    });
   };
 
   findTrip = () => {
-    const req = {
-      participants: this.props.participants,
-      tripType: this.state.tripType,
-      tripLength: this.state.tripLength
+    const request = {
+      participants: this.props.request.participants,
+      tripType: this.props.request.tripType,
+      tripLength: this.props.request.tripLength
     };
-    console.log(req);
+    console.log(request);
   };
 
   render() {
@@ -175,7 +96,7 @@ ConfigurationProps,
                 >
                   {getStepContent(index)}
                 </Typography>
-                {this.getStepMenu(index)}
+                {getStepMenu(index, this.state.timeUnits, (s: string) => this.handleUpdateTimeUnits, this.props)}
                 <div className={classes.actionsContainer}>
                   <div>
                     <Button
@@ -228,15 +149,15 @@ ConfigurationProps,
 function mapStateToProps(state: any): ConfigurationStoreProps {
   const configState = state.config;
   return {
-    participants: configState.participants,
+    request: configState.request,
   };
 }
 
 function mapActionToProps(dispatch: any) {
   return {
-    handleUpdateParticipants: (s: string) => dispatch(updateParticipants(s))
+    handleUpdateConfigurationRequest: (s: ConfigurationRequest) => dispatch(updateConfigurationRequest(s)),
   };
 }
 
-export const Configuration = 
-connect<ConfigurationStoreProps, ConfigurationDispatchProps, ConfigurationOwnProps>(mapStateToProps, mapActionToProps)(ConfigurationInternal);
+export const Configuration =
+  connect<ConfigurationStoreProps, ConfigurationDispatchProps, ConfigurationOwnProps>(mapStateToProps, mapActionToProps)(ConfigurationInternal);
