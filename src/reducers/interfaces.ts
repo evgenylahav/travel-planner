@@ -10,8 +10,13 @@ export interface ConfigurationRequest {
 }
 
 export interface Places {
+    id: number
     name: string;
+    sleeping: boolean;
+    day: number;
     position: PlacePosition;
+    date?: string;
+    time?: string;
 }
 
 export interface PlacePosition {

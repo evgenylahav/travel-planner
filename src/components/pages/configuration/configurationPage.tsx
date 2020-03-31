@@ -14,7 +14,9 @@ import { getSteps, getStepContent, getStepMenu } from "./configurationUtils";
 
 import { connect } from 'react-redux';
 import { updateConfigurationRequest } from '../../../actions/configActions';
-import { ConfigurationRequest } from "../../../reducers/interfaces";
+import { ConfigurationRequest, Places } from "../../../reducers/interfaces";
+import { updatePlaces } from "../../../actions/placesActions";
+import { places } from "../../../resources/constants";
 
 const classes = require("./configurationPage.scss");
 
@@ -24,6 +26,7 @@ export interface ConfigurationStoreProps {
 
 export interface ConfigurationDispatchProps {
   handleUpdateConfigurationRequest: (request: ConfigurationRequest) => void;
+  handleUpdatePlaces: (places: Places[]) => void;
 }
 
 export interface ConfigurationOwnProps { }
@@ -78,6 +81,7 @@ class ConfigurationInternal extends React.Component<
       tripLength: this.props.request.tripLength
     };
     console.log(request);
+    this.props.handleUpdatePlaces(places);
   };
 
   render() {
@@ -156,6 +160,7 @@ function mapStateToProps(state: any): ConfigurationStoreProps {
 function mapActionToProps(dispatch: any) {
   return {
     handleUpdateConfigurationRequest: (s: ConfigurationRequest) => dispatch(updateConfigurationRequest(s)),
+    handleUpdatePlaces: (v: Places[]) => dispatch(updatePlaces(v))
   };
 }
 

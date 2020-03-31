@@ -1,6 +1,9 @@
 import React from "react";
 import { connect } from 'react-redux';
 
+// import { Container, Draggable } from "react-smooth-dnd";
+import arrayMove from "array-move";
+
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Button from "@material-ui/core/Button";
 import Container from "@material-ui/core/Container";
@@ -9,11 +12,14 @@ import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import Divider from "@material-ui/core/Divider";
-import InboxIcon from "@material-ui/icons/Inbox";
-import DraftsIcon from "@material-ui/icons/Drafts";
+import DeleteIcon from "@material-ui/icons/Delete";
+import EditIcon from "@material-ui/icons/Edit";
+import PlaceIcon from "@material-ui/icons/Place";
+import HotelIcon from "@material-ui/icons/Hotel";
 import AddIcon from "@material-ui/icons/Add";
 import { Places } from "../../../reducers/interfaces";
 import { updatePlaces } from "../../../actions/placesActions";
+import { ListItemSecondaryAction, IconButton } from "@material-ui/core";
 
 const classes = require("./placesList.scss");
 
@@ -43,7 +49,12 @@ export class PlacesListInternal extends React.Component<
     this.state = {};
   }
 
+  // onDrop = ({ removedIndex, addedIndex }) => {
+  //   setItems(items => arrayMove(items, removedIndex, addedIndex));
+  // };
+
   render() {
+    const { places } = this.props;
     return (
       <React.Fragment>
         <CssBaseline />
@@ -57,25 +68,31 @@ export class PlacesListInternal extends React.Component<
             Add Place
           </Button>
           <div className={classes.root}>
-            <List component="nav" aria-label="main mailbox folders">
-              <ListItem button>
-                <ListItemIcon>
-                  <InboxIcon />
-                </ListItemIcon>
-                <ListItemText primary="Inbox" />
+            <List component="nav">
+              { places.map((item: Places, id: number) => {
+                let icon = <PlaceIcon />;
+                if (item.sleeping) {
+                  icon = <HotelIcon />;
+                }
+                return(
+                  // <Draggable key={id}>
+                <ListItem button>
+                  <ListItemIcon>
+                    {icon}
+                  </ListItemIcon>
+                  <ListItemText primary={item.name} />
+                  <ListItemSecondaryAction>
+                    <IconButton edge="end" aria-label="edit">
+                      <EditIcon />
+                    </IconButton>
+                    <IconButton edge="end" aria-label="delete">
+                      <DeleteIcon />
+                    </IconButton>
+                  </ListItemSecondaryAction>
               </ListItem>
-              <ListItem button>
-                <ListItemIcon>
-                  <DraftsIcon />
-                </ListItemIcon>
-                <ListItemText primary="Drafts" />
-              </ListItem>
-            </List>
-            <Divider />
-            <List component="nav" aria-label="secondary mailbox folders">
-              <ListItem button>
-                <ListItemText primary="Trash" />
-              </ListItem>
+              // </Draggable>
+                );
+              }) }
             </List>
           </div>
         </Container>
