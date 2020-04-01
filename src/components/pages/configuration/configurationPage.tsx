@@ -14,7 +14,7 @@ import { getSteps, getStepContent, getStepMenu } from "./configurationUtils";
 
 import { connect } from 'react-redux';
 import { updateConfigurationRequest } from '../../../actions/configActions';
-import { ConfigurationRequest, Places } from "../../../reducers/interfaces";
+import { ConfigurationRequest, Place } from "../../../reducers/interfaces";
 import { updatePlaces } from "../../../actions/placesActions";
 import { places } from "../../../resources/constants";
 
@@ -26,7 +26,7 @@ export interface ConfigurationStoreProps {
 
 export interface ConfigurationDispatchProps {
   handleUpdateConfigurationRequest: (request: ConfigurationRequest) => void;
-  handleUpdatePlaces: (places: Places[]) => void;
+  handleUpdatePlaces: (places: Place[]) => void;
 }
 
 export interface ConfigurationOwnProps { }
@@ -160,7 +160,7 @@ function mapStateToProps(state: any): ConfigurationStoreProps {
 function mapActionToProps(dispatch: any) {
   return {
     handleUpdateConfigurationRequest: (s: ConfigurationRequest) => dispatch(updateConfigurationRequest(s)),
-    handleUpdatePlaces: (v: Places[]) => dispatch(updatePlaces(v))
+    handleUpdatePlaces: (v: Place[]) => dispatch(updatePlaces(v))
   };
 }
 

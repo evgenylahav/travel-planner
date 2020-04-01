@@ -1,9 +1,6 @@
 import React from "react";
 import { connect } from 'react-redux';
 
-// import { Container, Draggable } from "react-smooth-dnd";
-import arrayMove from "array-move";
-
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Button from "@material-ui/core/Button";
 import Container from "@material-ui/core/Container";
@@ -17,44 +14,115 @@ import EditIcon from "@material-ui/icons/Edit";
 import PlaceIcon from "@material-ui/icons/Place";
 import HotelIcon from "@material-ui/icons/Hotel";
 import AddIcon from "@material-ui/icons/Add";
-import { Places } from "../../../reducers/interfaces";
+import { Place } from "../../../reducers/interfaces";
 import { updatePlaces } from "../../../actions/placesActions";
 import { ListItemSecondaryAction, IconButton } from "@material-ui/core";
 
 const classes = require("./placesList.scss");
 
 export interface PlacesListStoreProps {
-  places: Places[];
+  places: Place[];
 }
 
 export interface PlacesListDispatchProps {
-  handleUpdatePlaces: (places: Places[]) => void;
+  handleUpdatePlaces: (places: Place[]) => void;
 }
 
 export interface PlacesListOwnProps { }
 
 export type PlacesListProps =
-PlacesListStoreProps
+  PlacesListStoreProps
   & PlacesListDispatchProps
   & PlacesListOwnProps;
 
-export interface PlacesListState {}
+export interface PlacesListState {
+  currentDay: string | undefined;
+}
 
 export class PlacesListInternal extends React.Component<
   PlacesListProps,
   PlacesListState
-> {
+  > {
   constructor(props: PlacesListProps, state: PlacesListState) {
     super(props, state);
-    this.state = {};
+    this.state = {
+      currentDay: "",
+    };
   }
 
-  // onDrop = ({ removedIndex, addedIndex }) => {
-  //   setItems(items => arrayMove(items, removedIndex, addedIndex));
-  // };
+  handleDeletePlace = (id: number) => {
+    const { places, handleUpdatePlaces } = this.props;
+    const filteredPlaces = places.filter(item => item.id !== id);
+    
+    handleUpdatePlaces(filteredPlaces);
+  }
+
+  handleUpdateCurrentDay = (currentDay: string | undefined) => {
+    this.setState({ currentDay });
+  }
+
+  handleAddPlace = () => {
+    const { places, handleUpdatePlaces } = this.props;
+    
+    const newPlace: Place = {
+      id: places.length + 1,
+      name: "New York",
+      sleeping: false,
+      day: "day 5",
+      position: {
+        lag: 50.5,
+        loc: -30.0
+    }};
+
+    const newPlaces = places.concat(newPlace);
+    handleUpdatePlaces(newPlaces);
+
+    // console.log(this.props.places);
+  }
+
+  renderPlacesList = (places: Place[]) => {
+    return (
+      <div className={classes.root}>
+        <List component="nav">
+          {places.map((item: Place, index: number) => {
+            let icon = <PlaceIcon />;
+            if (item.sleeping) {
+              icon = <HotelIcon />;
+            }
+            // let divider: boolean;
+            // if (item.day === this.state.currentDay) {
+            //   divider = false;
+            // } else { 
+            //   divider = true;
+            //   this.handleUpdateCurrentDay(item.day);
+            // }
+
+            return (
+              <ListItem button key={index}>
+                <ListItemIcon>
+                  {icon}
+                </ListItemIcon>
+                <ListItemText primary={item.name} />
+                <ListItemSecondaryAction>
+                  <IconButton edge="end" aria-label="edit" onClick={() => console.log("clicked on edit")}>
+                    <EditIcon />
+                  </IconButton>
+                  <IconButton edge="end" aria-label="delete" onClick={() => this.handleDeletePlace(item.id)}>
+                    <DeleteIcon />
+                  </IconButton>
+                </ListItemSecondaryAction>
+                {/* { true && <Divider /> } */}
+              </ListItem>
+            );
+          })}
+        </List>
+      </div>
+    );
+  }
 
   render() {
     const { places } = this.props;
+    console.log(places);
     return (
       <React.Fragment>
         <CssBaseline />
@@ -64,37 +132,11 @@ export class PlacesListInternal extends React.Component<
             color="default"
             className={classes.button}
             startIcon={<AddIcon />}
+            onClick={() => this.handleAddPlace()}
           >
             Add Place
           </Button>
-          <div className={classes.root}>
-            <List component="nav">
-              { places.map((item: Places, id: number) => {
-                let icon = <PlaceIcon />;
-                if (item.sleeping) {
-                  icon = <HotelIcon />;
-                }
-                return(
-                  // <Draggable key={id}>
-                <ListItem button>
-                  <ListItemIcon>
-                    {icon}
-                  </ListItemIcon>
-                  <ListItemText primary={item.name} />
-                  <ListItemSecondaryAction>
-                    <IconButton edge="end" aria-label="edit">
-                      <EditIcon />
-                    </IconButton>
-                    <IconButton edge="end" aria-label="delete">
-                      <DeleteIcon />
-                    </IconButton>
-                  </ListItemSecondaryAction>
-              </ListItem>
-              // </Draggable>
-                );
-              }) }
-            </List>
-          </div>
+          {this.renderPlacesList(places)}
         </Container>
       </React.Fragment>
     );
@@ -110,7 +152,7 @@ function mapStateToProps(state: any): PlacesListStoreProps {
 
 function mapActionToProps(dispatch: any) {
   return {
-    handleUpdatePlaces: (s: Places[]) => dispatch(updatePlaces(s)),
+    handleUpdatePlaces: (s: Place[]) => dispatch(updatePlaces(s)),
   };
 }
 

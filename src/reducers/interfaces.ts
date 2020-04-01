@@ -1,6 +1,6 @@
 export interface ApplicationState {
     request: ConfigurationRequest;
-    places: Places[];
+    places: Place[];
 }
 
 export interface ConfigurationRequest {
@@ -9,14 +9,14 @@ export interface ConfigurationRequest {
     tripLength: number;
 }
 
-export interface Places {
-    id: number
-    name: string;
-    sleeping: boolean;
-    day: number;
-    position: PlacePosition;
-    date?: string;
-    time?: string;
+export interface Place {
+    id: number // unique identifier of the place
+    name: string; // the name of the place
+    sleeping: boolean; // is it a place of a sleepover (hotel, B&B, ...)
+    position: PlacePosition; // the position of the place on the map
+    date?: string; // the date of the arrival
+    time?: string; // the time of the arrival
+    day?: string; // if there is no date, it is possible to use arbitrary day
 }
 
 export interface PlacePosition {
