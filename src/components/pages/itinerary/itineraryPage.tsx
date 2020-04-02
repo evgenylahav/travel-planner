@@ -14,7 +14,7 @@ export class Itinerary extends React.Component<ItineraryProps, ItineraryState> {
 
   render() {
     return (
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 3fr" }}>
+      <div style={{ display: "grid", gridTemplateColumns: "2fr 4fr" }}>
         <PlacesList />
         <div style={{ height: "100vh", width: "100vm" }}>
         <WrappedMap

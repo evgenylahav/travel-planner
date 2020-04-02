@@ -14,9 +14,12 @@ import EditIcon from "@material-ui/icons/Edit";
 import PlaceIcon from "@material-ui/icons/Place";
 import HotelIcon from "@material-ui/icons/Hotel";
 import AddIcon from "@material-ui/icons/Add";
+import AddLocationIcon from "@material-ui/icons/AddLocation";
+import FlightTakeoffIcon from "@material-ui/icons/FlightTakeoff";
 import { Place } from "../../../reducers/interfaces";
 import { updatePlaces } from "../../../actions/placesActions";
 import { ListItemSecondaryAction, IconButton } from "@material-ui/core";
+import { AddPlace } from "./addPlaceDialog";
 
 const classes = require("./placesList.scss");
 
@@ -37,6 +40,7 @@ export type PlacesListProps =
 
 export interface PlacesListState {
   currentDay: string | undefined;
+  showAddPlaceDialog: boolean;
 }
 
 export class PlacesListInternal extends React.Component<
@@ -47,6 +51,7 @@ export class PlacesListInternal extends React.Component<
     super(props, state);
     this.state = {
       currentDay: "",
+      showAddPlaceDialog: false,
     };
   }
 
@@ -62,23 +67,29 @@ export class PlacesListInternal extends React.Component<
   }
 
   handleAddPlace = () => {
-    const { places, handleUpdatePlaces } = this.props;
+    this.setState({ showAddPlaceDialog: true });
+    // const { places, handleUpdatePlaces } = this.props;
     
-    const newPlace: Place = {
-      id: places.length + 1,
-      name: "New York",
-      sleeping: false,
-      day: "day 5",
-      position: {
-        lag: 50.5,
-        loc: -30.0
-    }};
+    // const newPlace: Place = {
+    //   id: places.length + 1,
+    //   name: "New York",
+    //   sleeping: false,
+    //   day: "day 5",
+    //   position: {
+    //     lag: 50.5,
+    //     loc: -30.0
+    // }};
 
-    const newPlaces = places.concat(newPlace);
-    handleUpdatePlaces(newPlaces);
+    // const newPlaces = places.concat(newPlace);
+    // handleUpdatePlaces(newPlaces);
 
     // console.log(this.props.places);
   }
+
+  handleCloseAddPlaceDialog = () => {
+    this.setState({ showAddPlaceDialog: false });
+  }
+
 
   renderPlacesList = (places: Place[]) => {
     return (
@@ -126,18 +137,32 @@ export class PlacesListInternal extends React.Component<
     return (
       <React.Fragment>
         <CssBaseline />
-        <Container maxWidth="sm">
+        <Container maxWidth="sm" style={{ marginTop: "20px", justifyItems: "center" }}>
+          <span>
           <Button
             variant="contained"
             color="default"
             className={classes.button}
-            startIcon={<AddIcon />}
-            onClick={() => this.handleAddPlace()}
+            startIcon={<AddLocationIcon />}
+            onClick={this.handleAddPlace}
+            style={{marginRight: "10px"}}
           >
             Add Place
           </Button>
+          <Button
+            variant="contained"
+            color="default"
+            className={classes.button}
+            startIcon={<FlightTakeoffIcon />}
+            onClick={this.handleAddPlace}
+          >
+            Complete Itinerary
+          </Button>
+          </span>
           {this.renderPlacesList(places)}
+          {this.state.showAddPlaceDialog && <AddPlace handleClose={this.handleCloseAddPlaceDialog}/>}
         </Container>
+        
       </React.Fragment>
     );
   }
