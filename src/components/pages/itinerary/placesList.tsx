@@ -58,7 +58,7 @@ export class PlacesListInternal extends React.Component<
   handleDeletePlace = (id: number) => {
     const { places, handleUpdatePlaces } = this.props;
     const filteredPlaces = places.filter(item => item.id !== id);
-    
+
     handleUpdatePlaces(filteredPlaces);
   }
 
@@ -68,22 +68,17 @@ export class PlacesListInternal extends React.Component<
 
   handleAddPlace = () => {
     this.setState({ showAddPlaceDialog: true });
-    // const { places, handleUpdatePlaces } = this.props;
-    
-    // const newPlace: Place = {
-    //   id: places.length + 1,
-    //   name: "New York",
-    //   sleeping: false,
-    //   day: "day 5",
-    //   position: {
-    //     lag: 50.5,
-    //     loc: -30.0
-    // }};
+  }
 
-    // const newPlaces = places.concat(newPlace);
-    // handleUpdatePlaces(newPlaces);
+  handleAddPlaceInDialog = (newPlace: Place) => {
+    const { places, handleUpdatePlaces } = this.props;
 
-    // console.log(this.props.places);
+    const newPlaces = places.concat(newPlace);
+    handleUpdatePlaces(newPlaces);
+
+    console.log(this.props.places);
+
+    this.handleCloseAddPlaceDialog();
   }
 
   handleCloseAddPlaceDialog = () => {
@@ -139,30 +134,34 @@ export class PlacesListInternal extends React.Component<
         <CssBaseline />
         <Container maxWidth="sm" style={{ marginTop: "20px", justifyItems: "center" }}>
           <span>
-          <Button
-            variant="contained"
-            color="default"
-            className={classes.button}
-            startIcon={<AddLocationIcon />}
-            onClick={this.handleAddPlace}
-            style={{marginRight: "10px"}}
-          >
-            Add Place
+            <Button
+              variant="contained"
+              color="default"
+              className={classes.button}
+              startIcon={<AddLocationIcon />}
+              onClick={this.handleAddPlace}
+              style={{ marginRight: "10px" }}
+            >
+              Add Place
           </Button>
-          <Button
-            variant="contained"
-            color="default"
-            className={classes.button}
-            startIcon={<FlightTakeoffIcon />}
-            onClick={this.handleAddPlace}
-          >
-            Complete Itinerary
+            <Button
+              variant="contained"
+              color="default"
+              className={classes.button}
+              startIcon={<FlightTakeoffIcon />}
+              onClick={this.handleAddPlace}
+            >
+              Complete Itinerary
           </Button>
           </span>
           {this.renderPlacesList(places)}
-          {this.state.showAddPlaceDialog && <AddPlace handleClose={this.handleCloseAddPlaceDialog}/>}
+          {this.state.showAddPlaceDialog &&
+            <AddPlace
+              handleClose={this.handleCloseAddPlaceDialog}
+              handleAddPlace={(newPlace: Place) => this.handleAddPlaceInDialog(newPlace)} />
+          }
         </Container>
-        
+
       </React.Fragment>
     );
   }
