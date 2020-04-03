@@ -1,4 +1,4 @@
-import { combineReducers } from 'redux'
+import { combineReducers, AnyAction, Reducer } from 'redux'
 import ConfigReducer from './configReducer'
 import ItineraryReducer from './itineraryReducer'
 
@@ -8,3 +8,5 @@ const rootReducer = combineReducers({
 });
 
 export default rootReducer;
+
+export type RootState = ReturnType<typeof rootReducer>

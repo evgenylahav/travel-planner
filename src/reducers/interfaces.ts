@@ -1,6 +1,7 @@
 export interface ApplicationState {
     request: ConfigurationRequest;
     places: Place[];
+    days: Day[];
 }
 
 export interface ConfigurationRequest {
@@ -22,4 +23,9 @@ export interface Place {
 export interface PlacePosition {
     lag: number;
     loc: number;
+}
+
+export interface Day {
+    name: string;
+    date?:  string;
 }

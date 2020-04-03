@@ -24,7 +24,7 @@ export const places = [
       id: 1,
       name: "Monaco",
       sleeping: false,
-      day: "day 1",
+      day: "Day 1",
       position: {
         lag: 0.0,
         loc: 0.0
@@ -32,7 +32,7 @@ export const places = [
       id: 2,
       name: "Paris",
       sleeping: false,
-      day: "day 2",
+      day: "Day 2",
       position: {
         lag: 10.5,
         loc: -10.0
@@ -40,7 +40,7 @@ export const places = [
       id: 4,
       name: "London",
       sleeping: false,
-      day: "day 2",
+      day: "Day 2",
       position: {
         lag: 44.44,
         loc: 34.34
@@ -48,7 +48,7 @@ export const places = [
       id: 3,
       name: "Tel-Aviv",
       sleeping: true,
-      day: "day 4",
+      day: "Day 4",
       position: {
         lag: 100.0,
         loc: 100.0

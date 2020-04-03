@@ -43,8 +43,9 @@ interface PlaceType {
   };
 }
 
-export default function GoogleMaps() {
+export default function GoogleMaps(props: any) {
   const classes = useStyles();
+  const { setPlaceName } = props;
   const [inputValue, setInputValue] = React.useState('');
   const [options, setOptions] = React.useState<PlaceType[]>([]);
   const loaded = React.useRef(false);
@@ -62,7 +63,9 @@ export default function GoogleMaps() {
   }
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setInputValue(event.target.value);
+      const value: string = event.target.value;
+      setInputValue(value);
+      setPlaceName(value);
   };
 
   const fetch = React.useMemo(
