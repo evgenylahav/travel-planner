@@ -17,7 +17,7 @@ export interface Place {
     position: PlacePosition; // the position of the place on the map
     date?: string; // the date of the arrival
     time?: string; // the time of the arrival
-    day?: string; // if there is no date, it is possible to use arbitrary day
+    day: string; // if there is no date, it is possible to use arbitrary day
 }
 
 export interface PlacePosition {

@@ -8,8 +8,10 @@ import AddLocationIcon from "@material-ui/icons/AddLocation";
 import FlightTakeoffIcon from "@material-ui/icons/FlightTakeoff";
 import { Place, Day } from "../../../reducers/interfaces";
 import { updatePlaces } from "../../../actions/placesActions";
+import { updateDays } from '../../../actions/daysActions';
 import { AddPlace } from "./addPlaceDialog";
 import { DaysTabs } from "./daysTabs";
+import AddIcon from "@material-ui/icons/Add";
 
 const classes = require("./itineraryDetails.scss");
 
@@ -20,6 +22,7 @@ export interface ItineraryDetailsStoreProps {
 
 export interface ItineraryDetailsDispatchProps {
   handleUpdatePlaces: (places: Place[]) => void;
+  handleUpdateDays: (days: Day[]) => void;
 }
 
 export interface ItineraryDetailsOwnProps { }
@@ -58,6 +61,18 @@ export class ItineraryDetailsInternal extends React.Component<
     this.setState({ showAddPlaceDialog: false });
   }
 
+  handleAddANewDay = () => {
+    const { days } = this.props;
+    console.log(days);
+    const newDay: Day = {
+      name: `Day ${days.length + 1}`,
+    }
+    console.log(newDay);
+    const newDays = days.concat(newDay);
+    console.log(newDays);
+    this.props.handleUpdateDays(newDays);
+  }
+
   render() {
     const { places, days } = this.props;
     console.log(places);
@@ -65,7 +80,16 @@ export class ItineraryDetailsInternal extends React.Component<
       <React.Fragment>
         <CssBaseline />
         <Container maxWidth="sm" style={{ marginTop: "20px", justifyItems: "center" }}>
-          <span style={{  }}>
+          <span>
+          <Button
+              variant="contained"
+              color="secondary"
+              startIcon={<AddIcon />}
+              onClick={this.handleAddANewDay}
+              style={{ marginRight: "10px", marginBottom: "20px" }}
+            >
+              Add A New Day
+            </Button>
             <Button
               variant="contained"
               color="default"
@@ -76,7 +100,7 @@ export class ItineraryDetailsInternal extends React.Component<
             >
               Add Place
             </Button>
-            <Button
+            {/* <Button
               variant="contained"
               color="default"
               className={classes.button}
@@ -85,9 +109,9 @@ export class ItineraryDetailsInternal extends React.Component<
               style={{ marginRight: "10px", marginBottom: "20px" }}
             >
               Complete Itinerary
-            </Button>
+            </Button> */}
           </span>
-          <DaysTabs places={places} days={days} />
+          <DaysTabs />
           {this.state.showAddPlaceDialog &&
             <AddPlace
               handleClose={this.handleCloseAddPlaceDialog}
@@ -110,6 +134,7 @@ function mapStateToProps(state: any): ItineraryDetailsStoreProps {
 function mapActionToProps(dispatch: any) {
   return {
     handleUpdatePlaces: (s: Place[]) => dispatch(updatePlaces(s)),
+    handleUpdateDays: (s: Day[]) => dispatch(updateDays(s)),
   };
 }
 

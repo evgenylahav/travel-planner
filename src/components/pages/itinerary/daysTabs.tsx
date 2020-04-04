@@ -1,4 +1,5 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
@@ -6,6 +7,7 @@ import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
 import { Day, Place } from '../../../reducers/interfaces';
 import { ListOfPlaces } from './listOfPlaces';
+import { RootState } from '../../../reducers';
 
 interface TabPanelProps {
     children?: React.ReactNode;
@@ -43,23 +45,29 @@ const useStyles = makeStyles((theme: Theme) => ({
         flexGrow: 1,
         backgroundColor: theme.palette.background.paper,
         display: 'flex',
-        height: 224,
+        height: "90%",
     },
     tabs: {
         borderRight: `1px solid ${theme.palette.divider}`,
     },
 }));
 
-export function DaysTabs(props: any) {
+export function DaysTabs() {
     const classes = useStyles();
-    const { days } = props;
-    const [dayValue, setDayValue] = React.useState(0);
+    
+    const itinerary = useSelector((state: RootState) => state.itinerary);
+
+    const days = itinerary.days;
+
+    const isDays: boolean = days.length > 0;
+
+    const initDay: number = isDays ? 1 : 0;
+
+    const [dayValue, setDayValue] = React.useState(initDay);
 
     const handleChange = (event: React.ChangeEvent<{}>, newDayValue: number) => {
         setDayValue(newDayValue);
     };
-
-    const dayName = days.length > 0 ? days[dayValue].name : "";
 
     return (
         <div className={classes.root}>
@@ -72,11 +80,11 @@ export function DaysTabs(props: any) {
                 className={classes.tabs}
             >
                 {days.map((item: Day, index: number) => {
-                    return (<Tab label={item.name} {...a11yProps(index)} />);
+                    return (<Tab key={index} label={item.name} {...a11yProps(index)} />);
                 })}
             </Tabs>
             <TabPanel value={dayValue} index={dayValue}>
-                <ListOfPlaces day={dayName} />
+                <ListOfPlaces day={isDays ? days[dayValue].name : ""} />
             </TabPanel>
         </div>
     );

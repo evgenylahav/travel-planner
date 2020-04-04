@@ -8,7 +8,5 @@ export const INITIAL_STATE: ApplicationState = {
     tripLength: 0,
   },
   places: [],
-  days: [
-    { name: "Day 1" },
-  ]
+  days: [],
 };

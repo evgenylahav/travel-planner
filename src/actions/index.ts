@@ -5,4 +5,4 @@ export const UPDATE_CONFIGURATION = "UPDATE_CONFIGURATION";
 export const UPDATE_PLACES = "UPDATE_PLACES";
 
 // days
-export const ADD_NEW_DAY = "ADD_NEW_DAY";
+export const UPDATE_DAYS = "UPDATE_DAYS";

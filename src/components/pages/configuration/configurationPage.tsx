@@ -14,9 +14,10 @@ import { getSteps, getStepContent, getStepMenu } from "./configurationUtils";
 
 import { connect } from 'react-redux';
 import { updateConfigurationRequest } from '../../../actions/configActions';
-import { ConfigurationRequest, Place } from "../../../reducers/interfaces";
+import { ConfigurationRequest, Place, Day } from "../../../reducers/interfaces";
 import { updatePlaces } from "../../../actions/placesActions";
 import { places } from "../../../resources/constants";
+import { updateDays } from "../../../actions/daysActions";
 
 const classes = require("./configurationPage.scss");
 
@@ -27,6 +28,7 @@ export interface ConfigurationStoreProps {
 export interface ConfigurationDispatchProps {
   handleUpdateConfigurationRequest: (request: ConfigurationRequest) => void;
   handleUpdatePlaces: (places: Place[]) => void;
+  handleUpdateDays: (days: Day[]) => void;
 }
 
 export interface ConfigurationOwnProps { }
@@ -82,7 +84,25 @@ class ConfigurationInternal extends React.Component<
     };
     console.log(request);
     this.props.handleUpdatePlaces(places);
+    this.props.handleUpdateDays(this.createDays());
+
   };
+
+  createDays = (): Day[] => {
+
+    const allDays = new Set(places.map((item: Place) => item.day));
+    const allDaysArray = Array.from(allDays);
+
+    allDaysArray.sort();
+
+    const days: Day[] = allDaysArray.map(item => {
+      return {
+        name: item,
+      }
+    });
+
+    return days;
+  }
 
   render() {
     const { activeStep } = this.state;
@@ -160,7 +180,8 @@ function mapStateToProps(state: any): ConfigurationStoreProps {
 function mapActionToProps(dispatch: any) {
   return {
     handleUpdateConfigurationRequest: (s: ConfigurationRequest) => dispatch(updateConfigurationRequest(s)),
-    handleUpdatePlaces: (v: Place[]) => dispatch(updatePlaces(v))
+    handleUpdatePlaces: (v: Place[]) => dispatch(updatePlaces(v)),
+    handleUpdateDays: (v: Day[]) => dispatch(updateDays(v))
   };
 }
 

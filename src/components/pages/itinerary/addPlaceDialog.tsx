@@ -6,7 +6,6 @@ import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Paper from '@material-ui/core/Paper';
 import Draggable from 'react-draggable';
@@ -17,12 +16,10 @@ import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 
 import PlaceIcon from "@material-ui/icons/Place";
 import HotelIcon from "@material-ui/icons/Hotel";
-import AddIcon from "@material-ui/icons/Add";
-import { InputPlaceTxt } from './inputPlaceTxt';
+
 import { DaySelector } from './daySelector';
 import { RootState } from '../../../reducers';
 import { updatePlaces } from '../../../actions/placesActions';
-import { updateDays } from '../../../actions/daysActions';
 
 function PaperComponent(props: any) {
   return (
@@ -91,10 +88,6 @@ export function AddPlace(props: any) {
     setSelectedDay(day);
   }
 
-  const handleAddANewDay = () => {
-    dispatch(updateDays(days));
-  }
-
   return (
     <div>
       <Dialog
@@ -123,19 +116,8 @@ export function AddPlace(props: any) {
               </ToggleButton>
             </ToggleButtonGroup>
           </div>
-          <span>
-            <DaySelector selectDay={(day: string) => updateADay(day)} />
-            <Button
-              variant="contained"
-              color="default"
-              startIcon={<AddIcon />}
-              onClick={handleAddANewDay}
-              style={{ marginRight: "10px", marginBottom: "20px" }}
-            >
-              Add A New Day
-            </Button>
-          </span>
-
+          <DaySelector selectDay={(day: string) => setSelectedDay(day)} />
+          
           {/* <InputPlaceTxt setPlaceName={(name: string) => setPlaceName(name)}/> */}
           <GoogleMaps setPlaceName={(name: string) => setPlaceName(name)} />
         </DialogContent>
