@@ -25,6 +25,7 @@ export const places = [
       name: "Monaco",
       sleeping: false,
       day: "Day 1",
+      description: "visitting monaco and F1 race",
       position: {
         lag: 0.0,
         loc: 0.0
@@ -33,6 +34,7 @@ export const places = [
       name: "Paris",
       sleeping: false,
       day: "Day 2",
+      description: "city of the lights",
       position: {
         lag: 10.5,
         loc: -10.0
@@ -41,6 +43,7 @@ export const places = [
       name: "London",
       sleeping: false,
       day: "Day 2",
+      description: "football match",
       position: {
         lag: 44.44,
         loc: 34.34
@@ -49,6 +52,7 @@ export const places = [
       name: "Tel-Aviv",
       sleeping: true,
       day: "Day 4",
+      description: "back home",
       position: {
         lag: 100.0,
         loc: 100.0

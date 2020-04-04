@@ -9,6 +9,9 @@ import PlaceIcon from "@material-ui/icons/Place";
 import HotelIcon from "@material-ui/icons/Hotel";
 import DeleteIcon from "@material-ui/icons/Delete";
 import EditIcon from "@material-ui/icons/Edit";
+import LanguageIcon from "@material-ui/icons/Language";
+import Tooltip from '@material-ui/core/Tooltip';
+
 import { ListItemSecondaryAction, IconButton } from "@material-ui/core";
 import { Place } from '../../../reducers/interfaces';
 import { RootState } from '../../../reducers';
@@ -60,20 +63,25 @@ export function ListOfPlaces(props: ListOfPlacesProps) {
                     }
 
                     return (
-                        <ListItem button key={index}>
-                            <ListItemIcon>
-                                {icon}
-                            </ListItemIcon>
-                            <ListItemText primary={item.name} />
-                            <ListItemSecondaryAction>
-                                <IconButton edge="end" aria-label="edit" onClick={() => console.log("clicked on edit")}>
-                                    <EditIcon />
-                                </IconButton>
-                                <IconButton edge="end" aria-label="delete" onClick={() => handleDeletePlace(item.id)}>
-                                    <DeleteIcon />
-                                </IconButton>
-                            </ListItemSecondaryAction>
-                        </ListItem>
+                        <Tooltip title={item.description}>
+                            <ListItem button key={index}>
+                                <ListItemIcon>
+                                    {icon}
+                                </ListItemIcon>
+                                <ListItemText primary={item.name} />
+                                <ListItemSecondaryAction>
+                                    <IconButton edge="end" aria-label="web" onClick={() => window.open(item.web, "_blank")}>
+                                        <LanguageIcon />
+                                    </IconButton>
+                                    <IconButton edge="end" aria-label="edit" onClick={() => console.log("clicked on edit")}>
+                                        <EditIcon />
+                                    </IconButton>
+                                    <IconButton edge="end" aria-label="delete" onClick={() => handleDeletePlace(item.id)}>
+                                        <DeleteIcon />
+                                    </IconButton>
+                                </ListItemSecondaryAction>
+                            </ListItem>
+                        </Tooltip>
                     );
                 })}
             </List>

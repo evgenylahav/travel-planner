@@ -24,7 +24,12 @@ export function DaySelector(props: any) {
   const itinerary = useSelector((state: RootState) => state.itinerary);
   const days = itinerary.days;
 
-  const [currentDay, setCurrentDay] = React.useState(days[0].name);
+  let initDay = undefined;
+  if (days.length > 0){
+    initDay = days[0].name;
+  }
+
+  const [currentDay, setCurrentDay] = React.useState(initDay);
   selectDay(currentDay);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -42,7 +47,6 @@ export function DaySelector(props: any) {
           label="Select a day"
           value={currentDay}
           onChange={handleChange}
-          helperText="Please select the day for the current place"
           variant="outlined"
         >
           {days.map((item: Day) => {

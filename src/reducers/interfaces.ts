@@ -15,9 +15,13 @@ export interface Place {
     name: string; // the name of the place
     sleeping: boolean; // is it a place of a sleepover (hotel, B&B, ...)
     position: PlacePosition; // the position of the place on the map
+    day: string; // when the place will  be visitted
+    description: string; // provides descrition regardng the place
+    media?: any; // provides media (mainly images) of the place
+    web?: string; // provides the web-site link
     date?: string; // the date of the arrival
     time?: string; // the time of the arrival
-    day: string; // if there is no date, it is possible to use arbitrary day
+    
 }
 
 export interface PlacePosition {
