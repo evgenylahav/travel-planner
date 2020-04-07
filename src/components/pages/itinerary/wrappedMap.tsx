@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   GoogleMap,
   withScriptjs,
@@ -8,6 +9,8 @@ import {
   InfoWindow
 } from 'react-google-maps';
 import * as locationsData from "./locations.json";
+import { RootState } from '../../../reducers';
+import { Place } from '../../../reducers/interfaces';
 
 type MapProps = {
   children?: React.ReactNode,
@@ -16,7 +19,17 @@ type MapProps = {
 };
 
 const Map = (props: MapProps) => {
-  const [selectedLocation, setSelectedLocation] = useState<any>(null);
+  const [selectedLocation, setSelectedLocation] = useState<Place | any>(null);
+
+  const itinerary = useSelector((state: RootState) => state.itinerary);
+
+  const dispatch = useDispatch();
+
+  const places = itinerary.places;
+
+  const defaultCenter = places.length > 0 
+  ? { lat: places[0].position.lat, lng: places[0].position.lng }
+  : { lat: 32.0853, lng: 34.7818 };
 
   // const showInfoWindow: boolean = selectedLocation.name !== "";
 
@@ -25,17 +38,17 @@ const Map = (props: MapProps) => {
   return (
     <GoogleMap
       defaultZoom={10}
-      defaultCenter={{ lat: 45.421532, lng: -75.697189 }}
+      defaultCenter={defaultCenter}
     >
-      {locationsData.features.map((location: any) => (
+      {places.map((place: Place, index: number) => (
         <Marker
-          key={location.properties.PARK_ID}
+          key={index}
           position={{
-            lat: location.geometry.coordinates[1],
-            lng: location.geometry.coordinates[0]
+            lat: place.position.lat,
+            lng: place.position.lng
           }}
           onClick={() => {
-            setSelectedLocation(location);
+            setSelectedLocation(place);
           }}
         />
       ))}
@@ -46,13 +59,13 @@ const Map = (props: MapProps) => {
             setSelectedLocation(null);
           }}
           position={{
-            lat: selectedLocation?.geometry?.coordinates[1],
-            lng: selectedLocation?.geometry.coordinates[0]
+            lat: selectedLocation.position.lat,
+            lng: selectedLocation.position.lng
           }}
         >
           <div>
-            <h2>{selectedLocation.properties.NAME}</h2>
-            <p>{selectedLocation.properties.DESCRIPTIO}</p>
+            <h2>{selectedLocation.name}</h2>
+            <p>{selectedLocation.description}</p>
           </div>
         </InfoWindow>
       )}

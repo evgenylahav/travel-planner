@@ -1,5 +1,4 @@
 import { ApplicationState } from "./interfaces";
-import {Action, Reducer} from "redux";
 
 export const INITIAL_STATE: ApplicationState = {
   request: {

@@ -27,8 +27,8 @@ export const places = [
       day: "Day 1",
       description: "visitting monaco and F1 race",
       position: {
-        lag: 0.0,
-        loc: 0.0
+        lat: 43.7384,
+        lng: 7.4246
     }}, {
       id: 2,
       name: "Paris",
@@ -36,25 +36,25 @@ export const places = [
       day: "Day 2",
       description: "city of the lights",
       position: {
-        lag: 10.5,
-        loc: -10.0
+        lat: 48.8566,
+        lng: 2.3522
     }}, {
       id: 4,
-      name: "London",
+      name: "Chamonix",
       sleeping: false,
       day: "Day 2",
       description: "football match",
       position: {
-        lag: 44.44,
-        loc: 34.34
+        lat: 45.9237,
+        lng: 6.8694
     }}, {
       id: 3,
-      name: "Tel-Aviv",
+      name: "Nice",
       sleeping: true,
       day: "Day 4",
       description: "back home",
       position: {
-        lag: 100.0,
-        loc: 100.0
+        lat: 43.7102,
+        lng: 7.2620
     }}
 ];

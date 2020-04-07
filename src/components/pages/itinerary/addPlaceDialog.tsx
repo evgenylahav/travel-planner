@@ -23,6 +23,7 @@ import HotelIcon from "@material-ui/icons/Hotel";
 import { DaySelector } from './daySelector';
 import { RootState } from '../../../reducers';
 import { updatePlaces } from '../../../actions/placesActions';
+import { LocationsAutoComplete } from './locationsAutoComplete';
 
 function PaperComponent(props: any) {
   return (
@@ -60,6 +61,10 @@ const useStyles = makeStyles((theme) => ({
 export function AddPlace(props: any) {
   const [placeType, setPlaceType] = useState<string>('place');
   const [placeName, setPlaceName] = useState<string>('');
+  const [position, setPosition] = useState<any>({
+    lag: 0.0,
+    loc: 0.0
+  });
   const [selectedDay, setSelectedDay] = useState<string>('');
   const [description, setDescription] = useState<string>("");
   const [website, setWebsite] = useState<string>("");
@@ -80,13 +85,12 @@ export function AddPlace(props: any) {
       name: placeName,
       sleeping: placeType === "hotel",
       day: selectedDay,
-      position: {
-        lag: 50.5,
-        loc: -30.0
-      },
+      position: position,
       description: description,
       web: website,
     };
+
+    console.log(newPlace);
 
     const newPlaces = places.concat(newPlace);
     dispatch(updatePlaces(newPlaces));
@@ -139,9 +143,13 @@ export function AddPlace(props: any) {
           {/* place selector */}
           <form className={classes.root} noValidate autoComplete="off">
             {/* google maps selector */}
-            <TextField id="outlined-basic" label="Place Name" variant="outlined" onChange={(e) => setPlaceName(e.target.value)} />
+        
             {/* <GoogleMaps setPlaceName={(name: string) => setPlaceName(name)} /> */}
-            {/* <InputPlaceTxt setPlaceName={(name: string) => setPlaceName(name)}/> */}
+            
+            <LocationsAutoComplete 
+            setPlaceName={(name: string) => setPlaceName(name)}
+            setPosition={(p: any) => setPosition(p)}
+            />
 
             {/* description */}
             <TextareaAutosize

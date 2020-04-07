@@ -25,8 +25,8 @@ export interface Place {
 }
 
 export interface PlacePosition {
-    lag: number;
-    loc: number;
+    lat: number;
+    lng: number;
 }
 
 export interface Day {
