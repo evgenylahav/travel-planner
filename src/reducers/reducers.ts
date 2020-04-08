@@ -6,6 +6,7 @@ export const INITIAL_STATE: ApplicationState = {
     tripType: "",
     tripLength: 0,
   },
+  currentPlace: null,
   places: [],
   days: [],
 };

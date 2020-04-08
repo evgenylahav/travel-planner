@@ -1,21 +1,18 @@
-import React, { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import {
   GoogleMap,
   withScriptjs,
   withGoogleMap,
-  DirectionsRenderer,
   Marker,
-  InfoWindow
-} from 'react-google-maps';
-import * as locationsData from "./locations.json";
-import { RootState } from '../../../reducers';
-import { Place } from '../../../reducers/interfaces';
+  InfoWindow,
+} from "react-google-maps";
+import { RootState } from "../../../reducers";
+import { Place } from "../../../reducers/interfaces";
 
 type MapProps = {
-  children?: React.ReactNode,
-  googleMapURL: string,
-
+  children?: React.ReactNode;
+  googleMapURL: string;
 };
 
 const Map = (props: MapProps) => {
@@ -26,26 +23,20 @@ const Map = (props: MapProps) => {
   const dispatch = useDispatch();
 
   const places = itinerary.places;
+  const currentPlace = itinerary.currentPlace;
 
-  const defaultCenter = places.length > 0 
-  ? { lat: places[0].position.lat, lng: places[0].position.lng }
-  : { lat: 32.0853, lng: 34.7818 };
-
-  // const showInfoWindow: boolean = selectedLocation.name !== "";
-
-  // console.log(selectedLocation);
+  const center = currentPlace
+    ? { lat: currentPlace.position.lat, lng: currentPlace.position.lng }
+    : { lat: 32.0853, lng: 34.7818 };
 
   return (
-    <GoogleMap
-      defaultZoom={10}
-      defaultCenter={defaultCenter}
-    >
+    <GoogleMap defaultZoom={10} center={center}>
       {places.map((place: Place, index: number) => (
         <Marker
           key={index}
           position={{
             lat: place.position.lat,
-            lng: place.position.lng
+            lng: place.position.lng,
           }}
           onClick={() => {
             setSelectedLocation(place);
@@ -60,7 +51,7 @@ const Map = (props: MapProps) => {
           }}
           position={{
             lat: selectedLocation.position.lat,
-            lng: selectedLocation.position.lng
+            lng: selectedLocation.position.lng,
           }}
         >
           <div>
@@ -69,9 +60,8 @@ const Map = (props: MapProps) => {
           </div>
         </InfoWindow>
       )}
-
     </GoogleMap>
   );
-}
+};
 
 export const WrappedMap = withScriptjs(withGoogleMap(Map));
