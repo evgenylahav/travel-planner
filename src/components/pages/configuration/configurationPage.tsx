@@ -12,12 +12,18 @@ import Typography from "@material-ui/core/Typography";
 
 import { getSteps, getStepContent, getStepMenu } from "./configurationUtils";
 
-import { connect } from 'react-redux';
-import { updateConfigurationRequest } from '../../../actions/configActions';
-import { ConfigurationRequest, Place, Day } from "../../../reducers/interfaces";
+import { connect } from "react-redux";
+import { updateConfigurationRequest } from "../../../actions/configActions";
+import {
+  ConfigurationRequest,
+  Place,
+  Day,
+  ItineraryDay,
+} from "../../../reducers/interfaces";
 import { updatePlaces } from "../../../actions/placesActions";
 import { places } from "../../../resources/constants";
 import { updateDays } from "../../../actions/daysActions";
+import { updateItinerary } from "../../../actions/itineraryActions";
 
 const classes = require("./configurationPage.scss");
 
@@ -29,14 +35,14 @@ export interface ConfigurationDispatchProps {
   handleUpdateConfigurationRequest: (request: ConfigurationRequest) => void;
   handleUpdatePlaces: (places: Place[]) => void;
   handleUpdateDays: (days: Day[]) => void;
+  handleUpdateMyItinerary: (myItinerary: ItineraryDay[]) => void;
 }
 
-export interface ConfigurationOwnProps { }
+export interface ConfigurationOwnProps {}
 
-export type ConfigurationProps =
-  ConfigurationStoreProps
-  & ConfigurationDispatchProps
-  & ConfigurationOwnProps;
+export type ConfigurationProps = ConfigurationStoreProps &
+  ConfigurationDispatchProps &
+  ConfigurationOwnProps;
 
 export interface ConfigurationState {
   activeStep: number;
@@ -46,18 +52,18 @@ export interface ConfigurationState {
 class ConfigurationInternal extends React.Component<
   ConfigurationProps,
   ConfigurationState
-  > {
+> {
   constructor(props: ConfigurationProps, state: ConfigurationState) {
     super(props, state);
     this.state = {
       activeStep: 0,
-      timeUnits: "days"
+      timeUnits: "days",
     };
   }
 
   handleUpdateTimeUnits = (timeUnits: string) => {
     this.setState({ timeUnits: timeUnits });
-  } 
+  };
 
   handleNext = () => {
     this.setState({ activeStep: this.state.activeStep + 1 });
@@ -72,7 +78,7 @@ class ConfigurationInternal extends React.Component<
     this.props.handleUpdateConfigurationRequest({
       participants: "",
       tripType: "",
-      tripLength: 0
+      tripLength: 0,
     });
   };
 
@@ -80,29 +86,45 @@ class ConfigurationInternal extends React.Component<
     const request = {
       participants: this.props.request.participants,
       tripType: this.props.request.tripType,
-      tripLength: this.props.request.tripLength
+      tripLength: this.props.request.tripLength,
     };
     console.log(request);
     this.props.handleUpdatePlaces(places);
     this.props.handleUpdateDays(this.createDays());
+    this.props.handleUpdateMyItinerary(this.createMyItinerary());
+  };
 
+  createMyItinerary = (): ItineraryDay[] => {
+    let myItinerary: ItineraryDay[] = [];
+    const days = this.createDays();
+
+    days.forEach((element) => {
+      const placesPerDay: Place[] = places.filter(
+        (item: Place) => item.day === element.name
+      );
+      const itineraryDay: ItineraryDay = {
+        dayName: element.name,
+        places: placesPerDay,
+      };
+      myItinerary.push(itineraryDay);
+    });
+    return myItinerary;
   };
 
   createDays = (): Day[] => {
-
     const allDays = new Set(places.map((item: Place) => item.day));
     const allDaysArray = Array.from(allDays);
 
     allDaysArray.sort();
 
-    const days: Day[] = allDaysArray.map(item => {
+    const days: Day[] = allDaysArray.map((item) => {
       return {
         name: item,
-      }
+      };
     });
 
     return days;
-  }
+  };
 
   render() {
     const { activeStep } = this.state;
@@ -120,7 +142,12 @@ class ConfigurationInternal extends React.Component<
                 >
                   {getStepContent(index)}
                 </Typography>
-                {getStepMenu(index, this.state.timeUnits, (s: string) => this.handleUpdateTimeUnits, this.props)}
+                {getStepMenu(
+                  index,
+                  this.state.timeUnits,
+                  (s: string) => this.handleUpdateTimeUnits,
+                  this.props
+                )}
                 <div className={classes.actionsContainer}>
                   <div>
                     <Button
@@ -179,11 +206,20 @@ function mapStateToProps(state: any): ConfigurationStoreProps {
 
 function mapActionToProps(dispatch: any) {
   return {
-    handleUpdateConfigurationRequest: (s: ConfigurationRequest) => dispatch(updateConfigurationRequest(s)),
+    handleUpdateConfigurationRequest: (s: ConfigurationRequest) =>
+      dispatch(updateConfigurationRequest(s)),
     handleUpdatePlaces: (v: Place[]) => dispatch(updatePlaces(v)),
-    handleUpdateDays: (v: Day[]) => dispatch(updateDays(v))
+    handleUpdateDays: (v: Day[]) => dispatch(updateDays(v)),
+    handleUpdateMyItinerary: (v: ItineraryDay[]) =>
+      dispatch(updateItinerary(v)),
   };
 }
 
-export const Configuration =
-  connect<ConfigurationStoreProps, ConfigurationDispatchProps, ConfigurationOwnProps>(mapStateToProps, mapActionToProps)(ConfigurationInternal);
+export const Configuration = connect<
+  ConfigurationStoreProps,
+  ConfigurationDispatchProps,
+  ConfigurationOwnProps
+>(
+  mapStateToProps,
+  mapActionToProps
+)(ConfigurationInternal);

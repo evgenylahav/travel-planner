@@ -8,5 +8,7 @@ export const INITIAL_STATE: ApplicationState = {
   },
   currentPlace: null,
   places: [],
+  filteredPlaces: [],
   days: [],
+  myItinerary: [],
 };

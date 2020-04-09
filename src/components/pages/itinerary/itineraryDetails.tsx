@@ -1,36 +1,35 @@
 import React from "react";
-import { connect } from 'react-redux';
+import { connect } from "react-redux";
 
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Button from "@material-ui/core/Button";
 import Container from "@material-ui/core/Container";
 import AddLocationIcon from "@material-ui/icons/AddLocation";
 import FlightTakeoffIcon from "@material-ui/icons/FlightTakeoff";
-import { Place, Day } from "../../../reducers/interfaces";
-import { updatePlaces } from "../../../actions/placesActions";
-import { updateDays } from '../../../actions/daysActions';
+import { Place, Day, ItineraryDay } from "../../../reducers/interfaces";
+import { updateDays } from "../../../actions/daysActions";
 import { AddPlace } from "./addPlaceDialog";
 import { DaysTabs } from "./daysTabs";
 import AddIcon from "@material-ui/icons/Add";
+import { updateItinerary } from "../../../actions/itineraryActions";
 
 const classes = require("./itineraryDetails.scss");
 
 export interface ItineraryDetailsStoreProps {
-  places: Place[];
   days: Day[];
+  myItinerary: ItineraryDay[];
 }
 
 export interface ItineraryDetailsDispatchProps {
-  handleUpdatePlaces: (places: Place[]) => void;
   handleUpdateDays: (days: Day[]) => void;
+  handleUpdateMyItinerary: (itinerary: ItineraryDay[]) => void;
 }
 
-export interface ItineraryDetailsOwnProps { }
+export interface ItineraryDetailsOwnProps {}
 
-export type ItineraryDetailsProps =
-  ItineraryDetailsStoreProps
-  & ItineraryDetailsDispatchProps
-  & ItineraryDetailsOwnProps;
+export type ItineraryDetailsProps = ItineraryDetailsStoreProps &
+  ItineraryDetailsDispatchProps &
+  ItineraryDetailsOwnProps;
 
 export interface ItineraryDetailsState {
   currentDay: string | undefined;
@@ -40,7 +39,7 @@ export interface ItineraryDetailsState {
 export class ItineraryDetailsInternal extends React.Component<
   ItineraryDetailsProps,
   ItineraryDetailsState
-  > {
+> {
   constructor(props: ItineraryDetailsProps, state: ItineraryDetailsState) {
     super(props, state);
     this.state = {
@@ -51,37 +50,47 @@ export class ItineraryDetailsInternal extends React.Component<
 
   handleUpdateCurrentDay = (currentDay: string | undefined) => {
     this.setState({ currentDay });
-  }
+  };
 
   handleAddPlace = () => {
     this.setState({ showAddPlaceDialog: true });
-  }
+  };
 
   handleCloseAddPlaceDialog = () => {
     this.setState({ showAddPlaceDialog: false });
-  }
+  };
 
   handleAddANewDay = () => {
-    const { days } = this.props;
-    console.log(days);
+    const { days, myItinerary } = this.props;
+    const newDayName = `Day ${days.length + 1}`;
     const newDay: Day = {
-      name: `Day ${days.length + 1}`,
-    }
-    console.log(newDay);
+      name: newDayName,
+    };
     const newDays = days.concat(newDay);
-    console.log(newDays);
     this.props.handleUpdateDays(newDays);
-  }
+
+    // update my itinerary
+    const newDayInItinerary: ItineraryDay = {
+      dayName: newDayName,
+      places: [],
+    };
+
+    const updatedItinerary: ItineraryDay[] = myItinerary.concat(
+      newDayInItinerary
+    );
+    this.props.handleUpdateMyItinerary(updatedItinerary);
+  };
 
   render() {
-    const { places, days } = this.props;
-    console.log(places);
     return (
       <React.Fragment>
         <CssBaseline />
-        <Container maxWidth="sm" style={{ marginTop: "20px", justifyItems: "center" }}>
+        <Container
+          maxWidth="sm"
+          style={{ marginTop: "20px", justifyItems: "center" }}
+        >
           <span>
-          <Button
+            <Button
               variant="contained"
               color="secondary"
               startIcon={<AddIcon />}
@@ -112,11 +121,9 @@ export class ItineraryDetailsInternal extends React.Component<
             </Button> */}
           </span>
           <DaysTabs />
-          {this.state.showAddPlaceDialog &&
-            <AddPlace
-              handleClose={this.handleCloseAddPlaceDialog}
-            />
-          }
+          {this.state.showAddPlaceDialog && (
+            <AddPlace handleClose={this.handleCloseAddPlaceDialog} />
+          )}
         </Container>
       </React.Fragment>
     );
@@ -126,17 +133,24 @@ export class ItineraryDetailsInternal extends React.Component<
 function mapStateToProps(state: any): ItineraryDetailsStoreProps {
   const itineraryState = state.itinerary;
   return {
-    places: itineraryState.places,
     days: itineraryState.days,
+    myItinerary: itineraryState.myItinerary,
   };
 }
 
 function mapActionToProps(dispatch: any) {
   return {
-    handleUpdatePlaces: (s: Place[]) => dispatch(updatePlaces(s)),
     handleUpdateDays: (s: Day[]) => dispatch(updateDays(s)),
+    handleUpdateMyItinerary: (s: ItineraryDay[]) =>
+      dispatch(updateItinerary(s)),
   };
 }
 
-export const ItineraryDetails =
-  connect<ItineraryDetailsStoreProps, ItineraryDetailsDispatchProps, ItineraryDetailsOwnProps>(mapStateToProps, mapActionToProps)(ItineraryDetailsInternal);
+export const ItineraryDetails = connect<
+  ItineraryDetailsStoreProps,
+  ItineraryDetailsDispatchProps,
+  ItineraryDetailsOwnProps
+>(
+  mapStateToProps,
+  mapActionToProps
+)(ItineraryDetailsInternal);

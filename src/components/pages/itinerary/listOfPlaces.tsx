@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { createStyles, Theme, makeStyles } from "@material-ui/core/styles";
 import List from "@material-ui/core/List";
@@ -13,12 +13,17 @@ import LanguageIcon from "@material-ui/icons/Language";
 import Tooltip from "@material-ui/core/Tooltip";
 
 import { ListItemSecondaryAction, IconButton } from "@material-ui/core";
-import { Place } from "../../../reducers/interfaces";
+import { Place, ItineraryDay } from "../../../reducers/interfaces";
 import { RootState } from "../../../reducers";
 import {
   updatePlaces,
   updateCurrentPlace,
+  updateFilteredPlaces,
 } from "../../../actions/placesActions";
+import { Container, Draggable } from "react-smooth-dnd";
+import arrayMove from "array-move";
+import DragHandleIcon from "@material-ui/icons/DragHandle";
+import { updateItinerary } from "../../../actions/itineraryActions";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -36,7 +41,7 @@ export interface ListOfPlacesProps {
 
 export function ListOfPlaces(props: ListOfPlacesProps) {
   const classes = useStyles();
-  const [selectedIndex, setSelectedIndex] = React.useState(0);
+  const [selectedIndex, setSelectedIndex] = useState(0);
 
   const { day } = props;
 
@@ -44,14 +49,64 @@ export function ListOfPlaces(props: ListOfPlacesProps) {
 
   const dispatch = useDispatch();
 
+  const myItinerary = itinerary.myItinerary;
   const places = itinerary.places;
 
-  const filteredPlaces = places.filter((item: Place) => item.day === day);
+  const selectedDay: ItineraryDay = myItinerary.filter(
+    (item: ItineraryDay) => item.dayName === day
+  )[0];
+
+  let selectedPlaces: Place[];
+
+  if (selectedDay === undefined) {
+    selectedPlaces = [];
+  } else {
+    selectedPlaces = selectedDay.places;
+  }
+
+  const onDrop = ({ removedIndex, addedIndex }: any) => {
+    const newListOfPlaces = arrayMove(selectedPlaces, removedIndex, addedIndex);
+    console.log(newListOfPlaces);
+
+    let dayItinerary: ItineraryDay = selectedDay;
+
+    dayItinerary.places = newListOfPlaces;
+
+    let updatedItinerary: ItineraryDay[] = myItinerary;
+
+    // remove the old day from my itinerary
+    updatedItinerary = updatedItinerary.filter(
+      (item: ItineraryDay) => item.dayName !== day
+    );
+
+    // add the new day to the itinerary
+    updatedItinerary.push(dayItinerary);
+
+    dispatch(updateItinerary(updatedItinerary));
+  };
 
   const handleDeletePlace = (id: number) => {
-    const filteredPlaces = places.filter((item: Place) => item.id !== id);
+    dispatch(
+      updatePlaces(selectedPlaces.filter((item: Place) => item.id !== id))
+    );
 
-    dispatch(updatePlaces(filteredPlaces));
+    let dayItinerary: ItineraryDay = selectedDay;
+    const filteredPlaces: Place[] = dayItinerary.places.filter(
+      (item: Place) => item.id !== id
+    );
+    dayItinerary.places = filteredPlaces;
+
+    let updatedItinerary: ItineraryDay[] = myItinerary;
+
+    // remove the old day from my itinerary
+    updatedItinerary = updatedItinerary.filter(
+      (item: ItineraryDay) => item.dayName !== day
+    );
+
+    // add the new day to the itinerary
+    updatedItinerary.push(dayItinerary);
+
+    dispatch(updateItinerary(updatedItinerary));
   };
 
   const handleListItemClick = (
@@ -66,49 +121,60 @@ export function ListOfPlaces(props: ListOfPlacesProps) {
   return (
     <div className={classes.root}>
       <List component="nav">
-        {filteredPlaces.map((item: Place, index: number) => {
-          let icon = <PlaceIcon />;
-          if (item.sleeping) {
-            icon = <HotelIcon />;
-          }
+        <Container
+          dragHandleSelector=".drag-handle"
+          lockAxis="y"
+          onDrop={onDrop}
+        >
+          {selectedPlaces.map((item: Place, index: number) => {
+            let icon = <PlaceIcon />;
+            if (item.sleeping) {
+              icon = <HotelIcon />;
+            }
 
-          return (
-            <Tooltip title={item.description}>
-              <ListItem
-                button
-                key={index}
-                selected={selectedIndex === index}
-                onClick={(event) => handleListItemClick(event, index, item)}
-              >
-                <ListItemIcon>{icon}</ListItemIcon>
-                <ListItemText primary={item.name} />
-                <ListItemSecondaryAction>
-                  <IconButton
-                    edge="end"
-                    aria-label="web"
-                    onClick={() => window.open(item.web, "_blank")}
+            return (
+              <Draggable key={index}>
+                <Tooltip title={item.description}>
+                  <ListItem
+                    button
+                    key={index}
+                    selected={selectedIndex === index}
+                    onClick={(event) => handleListItemClick(event, index, item)}
                   >
-                    <LanguageIcon />
-                  </IconButton>
-                  <IconButton
-                    edge="end"
-                    aria-label="edit"
-                    onClick={() => console.log("clicked on edit")}
-                  >
-                    <EditIcon />
-                  </IconButton>
-                  <IconButton
-                    edge="end"
-                    aria-label="delete"
-                    onClick={() => handleDeletePlace(item.id)}
-                  >
-                    <DeleteIcon />
-                  </IconButton>
-                </ListItemSecondaryAction>
-              </ListItem>
-            </Tooltip>
-          );
-        })}
+                    <ListItemIcon className="drag-handle">
+                      <DragHandleIcon />
+                    </ListItemIcon>
+                    <ListItemIcon>{icon}</ListItemIcon>
+                    <ListItemText primary={item.name} />
+                    <ListItemSecondaryAction>
+                      <IconButton
+                        edge="end"
+                        aria-label="web"
+                        onClick={() => window.open(item.web, "_blank")}
+                      >
+                        <LanguageIcon />
+                      </IconButton>
+                      <IconButton
+                        edge="end"
+                        aria-label="edit"
+                        onClick={() => console.log("clicked on edit")}
+                      >
+                        <EditIcon />
+                      </IconButton>
+                      <IconButton
+                        edge="end"
+                        aria-label="delete"
+                        onClick={() => handleDeletePlace(item.id)}
+                      >
+                        <DeleteIcon />
+                      </IconButton>
+                    </ListItemSecondaryAction>
+                  </ListItem>
+                </Tooltip>
+              </Draggable>
+            );
+          })}
+        </Container>
       </List>
     </div>
   );

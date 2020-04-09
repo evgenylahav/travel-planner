@@ -11,7 +11,7 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import Paper from "@material-ui/core/Paper";
 import Draggable from "react-draggable";
-import { Place } from "../../../reducers/interfaces";
+import { Place, ItineraryDay } from "../../../reducers/interfaces";
 import TextField from "@material-ui/core/TextField";
 
 import { DaySelector } from "./daySelector";
@@ -22,6 +22,7 @@ import {
 } from "../../../actions/placesActions";
 import { LocationsAutoComplete } from "./locationsAutoComplete";
 import { TogglePlaceType } from "./togglePlaceType";
+import { updateItinerary } from "../../../actions/itineraryActions";
 
 function PaperComponent(props: any) {
   return (
@@ -75,9 +76,41 @@ export function AddPlace(props: any) {
   const dispatch = useDispatch();
 
   const places = itinerary.places;
+  const myItinerary = itinerary.myItinerary;
 
   const { handleClose } = props;
   const classes = useStyles();
+
+  const updateMyItinerary = (newPlace: Place) => {
+    const dayName = newPlace.day;
+
+    // shallow copy
+    let updatedItinerary: ItineraryDay[] = [...myItinerary];
+
+    if (updatedItinerary.length === 0) {
+      const firstDay: ItineraryDay = {
+        dayName: dayName,
+        places: [newPlace],
+      };
+      updatedItinerary.push(firstDay);
+    } else {
+      // get the relevant day from the itinerary
+      let dayItinerary: ItineraryDay = updatedItinerary.filter(
+        (item: ItineraryDay) => item.dayName === dayName
+      )[0];
+
+      // remove the old day from my itinerary
+      updatedItinerary = updatedItinerary.filter(
+        (item: ItineraryDay) => item.dayName !== dayName
+      );
+
+      dayItinerary.places.push(newPlace);
+
+      // add the new day to the itinerary
+      updatedItinerary.push(dayItinerary);
+    }
+    dispatch(updateItinerary(updatedItinerary));
+  };
 
   const addNewPlaceToPlaces = () => {
     const newPlace: Place = {
@@ -94,6 +127,7 @@ export function AddPlace(props: any) {
 
     const newPlaces = places.concat(newPlace);
     dispatch(updatePlaces(newPlaces));
+    updateMyItinerary(newPlace);
     handleClose();
   };
 

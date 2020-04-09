@@ -1,8 +1,15 @@
 export interface ApplicationState {
   request: ConfigurationRequest;
   places: Place[];
+  filteredPlaces: Place[];
   currentPlace: Place | null;
   days: Day[];
+  myItinerary: ItineraryDay[];
+}
+
+export interface ItineraryDay {
+  dayName: string;
+  places: Place[];
 }
 
 export interface ConfigurationRequest {
