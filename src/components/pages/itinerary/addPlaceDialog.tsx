@@ -121,6 +121,7 @@ export function AddPlace(props: any) {
       position: position,
       description: description,
       web: website,
+      media: "https://d.newsweek.com/en/full/1561143/amsterdam.jpg",
     };
 
     dispatch(updateCurrentPlace(newPlace));

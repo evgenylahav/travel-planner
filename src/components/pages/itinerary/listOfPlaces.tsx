@@ -24,6 +24,7 @@ import { Container, Draggable } from "react-smooth-dnd";
 import arrayMove from "array-move";
 import DragHandleIcon from "@material-ui/icons/DragHandle";
 import { updateItinerary } from "../../../actions/itineraryActions";
+import EditPlace from "./editPlace";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -63,6 +64,10 @@ export function ListOfPlaces(props: ListOfPlacesProps) {
   } else {
     selectedPlaces = selectedDay.places;
   }
+
+  const [showEditPlaceCard, setShowEditPlaceCard] = useState(
+    selectedPlaces.map((item: Place) => false)
+  );
 
   const onDrop = ({ removedIndex, addedIndex }: any) => {
     const newListOfPlaces = arrayMove(selectedPlaces, removedIndex, addedIndex);
@@ -118,6 +123,17 @@ export function ListOfPlaces(props: ListOfPlacesProps) {
     dispatch(updateCurrentPlace(place));
   };
 
+  const showPlaceCard = (index: number) => {
+    let values = selectedPlaces.map((item) => false);
+    values[index] = true;
+    setShowEditPlaceCard(values);
+  };
+
+  const closeEditPlace = (index: number) => {
+    let values = selectedPlaces.map((item) => false);
+    setShowEditPlaceCard(values);
+  };
+
   return (
     <div className={classes.root}>
       <List component="nav">
@@ -151,13 +167,14 @@ export function ListOfPlaces(props: ListOfPlacesProps) {
                         edge="end"
                         aria-label="web"
                         onClick={() => window.open(item.web, "_blank")}
+                        disabled={item.web === ""}
                       >
                         <LanguageIcon />
                       </IconButton>
                       <IconButton
                         edge="end"
                         aria-label="edit"
-                        onClick={() => console.log("clicked on edit")}
+                        onClick={() => showPlaceCard(index)}
                       >
                         <EditIcon />
                       </IconButton>
@@ -171,6 +188,12 @@ export function ListOfPlaces(props: ListOfPlacesProps) {
                     </ListItemSecondaryAction>
                   </ListItem>
                 </Tooltip>
+                {showEditPlaceCard[index] && (
+                  <EditPlace
+                    place={item}
+                    close={(index: number) => closeEditPlace(index)}
+                  />
+                )}
               </Draggable>
             );
           })}
