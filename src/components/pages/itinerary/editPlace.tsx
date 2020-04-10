@@ -49,13 +49,7 @@ export default function EditPlace(props: any) {
               <EditIcon color="primary" fontSize="small" />
             </IconButton>
           </Typography>
-          <Typography
-            variant="body2"
-            color="textSecondary"
-            component="p"
-            onClick={() => window.open(place.web, "_blank")}
-            // onMouseOver={}
-          >
+          <Typography variant="body2" color="textSecondary" component="p">
             {`Website: ${place.web}`}
             <IconButton>
               <EditIcon color="primary" fontSize="small" />

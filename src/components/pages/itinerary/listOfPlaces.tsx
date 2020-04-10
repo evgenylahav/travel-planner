@@ -158,9 +158,13 @@ export function ListOfPlaces(props: ListOfPlacesProps) {
                     onClick={(event) => handleListItemClick(event, index, item)}
                   >
                     <ListItemIcon className="drag-handle">
-                      <DragHandleIcon />
+                      <Tooltip title={`use to re-order ${item.name}`}>
+                        <DragHandleIcon />
+                      </Tooltip>
                     </ListItemIcon>
-                    <ListItemIcon>{icon}</ListItemIcon>
+                    <Tooltip title={item.sleeping ? "Sleeping" : "Visiting"}>
+                      <ListItemIcon>{icon}</ListItemIcon>
+                    </Tooltip>
                     <ListItemText primary={item.name} />
                     <ListItemSecondaryAction>
                       <IconButton
@@ -169,21 +173,27 @@ export function ListOfPlaces(props: ListOfPlacesProps) {
                         onClick={() => window.open(item.web, "_blank")}
                         disabled={item.web === ""}
                       >
-                        <LanguageIcon />
+                        <Tooltip title={item.web}>
+                          <LanguageIcon />
+                        </Tooltip>
                       </IconButton>
                       <IconButton
                         edge="end"
                         aria-label="edit"
                         onClick={() => showPlaceCard(index)}
                       >
-                        <EditIcon />
+                        <Tooltip title={`click to edit ${item.name}`}>
+                          <EditIcon />
+                        </Tooltip>
                       </IconButton>
                       <IconButton
                         edge="end"
                         aria-label="delete"
                         onClick={() => handleDeletePlace(item.id)}
                       >
-                        <DeleteIcon />
+                        <Tooltip title={`click to delete ${item.name}`}>
+                          <DeleteIcon />
+                        </Tooltip>
                       </IconButton>
                     </ListItemSecondaryAction>
                   </ListItem>
