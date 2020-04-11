@@ -13,10 +13,12 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export function TogglePlaceType(props: any) {
-  const [placeType, setPlaceType] = useState<string>("place");
-  const classes = useStyles();
+  const { handlePlaceType, inputPlace } = props;
 
-  const { handlePlaceType } = props;
+  const [placeType, setPlaceType] = useState<string>(
+    inputPlace === null ? "place" : inputPlace
+  );
+  const classes = useStyles();
 
   const handleClick = (
     event: React.MouseEvent<HTMLElement>,

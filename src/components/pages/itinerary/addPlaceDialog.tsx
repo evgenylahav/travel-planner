@@ -151,26 +151,35 @@ export function AddPlace(props: any) {
         </DialogTitle>
         <DialogContent>
           {/* hotel or place */}
-          <TogglePlaceType
-            handlePlaceType={(placeType: string) => handlePlaceType(placeType)}
-          />
+          <form className={classes.root}>
+            <TogglePlaceType
+              inputPlace={"place"}
+              handlePlaceType={(placeType: string) =>
+                handlePlaceType(placeType)
+              }
+            />
+          </form>
 
           {/* day selector */}
           <DaySelector selectDay={(day: string) => setSelectedDay(day)} />
 
           {/* place selector */}
-          <LocationsAutoComplete
-            setPlaceName={(name: string) => setPlaceName(name)}
-            setPosition={(p: any) => setPosition(p)}
-          />
+          <form className={classes.root} noValidate autoComplete="off">
+            <LocationsAutoComplete
+              setPlaceName={(name: string) => setPlaceName(name)}
+              setPosition={(p: any) => setPosition(p)}
+            />
+          </form>
 
           {/* description */}
-          <TextareaAutosize
-            rowsMax={4}
-            aria-label="maximum height"
-            placeholder="Enter desription here..."
-            onChange={(e) => setDescription(e.target.value)}
-          />
+          <form className={classes.root} noValidate autoComplete="off">
+            <TextareaAutosize
+              rowsMax={4}
+              aria-label="maximum height"
+              placeholder="Enter desription here..."
+              onChange={(e) => setDescription(e.target.value)}
+            />
+          </form>
 
           {/* website */}
           <form className={classes.root} noValidate autoComplete="off">
@@ -186,7 +195,11 @@ export function AddPlace(props: any) {
           <Button autoFocus onClick={handleClose} color="primary">
             Cancel
           </Button>
-          <Button onClick={addNewPlaceToPlaces} color="primary">
+          <Button
+            onClick={addNewPlaceToPlaces}
+            color="primary"
+            disabled={placeName === ""}
+          >
             Add Place
           </Button>
         </DialogActions>

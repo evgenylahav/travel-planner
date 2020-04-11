@@ -8,10 +8,11 @@ import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import Typography from "@material-ui/core/Typography";
 import Box from "@material-ui/core/Box";
-import { Day, Place } from "../../../reducers/interfaces";
+import { Day, Place, ItineraryDay } from "../../../reducers/interfaces";
 import { ListOfPlaces } from "./listOfPlaces";
 import { RootState } from "../../../reducers";
 import { updateDays } from "../../../actions/daysActions";
+import { updateCurrentPlace } from "../../../actions/placesActions";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -64,6 +65,7 @@ export function DaysTabs() {
   const dispatch = useDispatch();
 
   const days = itinerary.days;
+  const myItinerary = itinerary.myItinerary;
 
   const [dayValue, setDayValue] = useState(0);
 
@@ -71,9 +73,19 @@ export function DaysTabs() {
     event: React.ChangeEvent<{}> | null,
     newDayValue: number
   ) => {
-    console.log("clicked on a tab");
-    console.log(newDayValue);
     setDayValue(newDayValue);
+
+    const selectedDay = days[newDayValue];
+
+    const itineraryDay = myItinerary.filter(
+      (item: ItineraryDay) => item.dayName === selectedDay.name
+    );
+
+    console.log(myItinerary);
+    console.log(itineraryDay);
+
+    const place = itineraryDay[0].places[0];
+    dispatch(updateCurrentPlace(place));
   };
 
   const removeDay = (dayName: string) => {
@@ -81,9 +93,6 @@ export function DaysTabs() {
     const newDays = days.filter((item: Day) => item.name !== dayName);
     dispatch(updateDays(newDays));
   };
-
-  console.log(days[dayValue]);
-  console.log(dayValue);
 
   return (
     <div className={classes.root}>

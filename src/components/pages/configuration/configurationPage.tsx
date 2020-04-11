@@ -20,7 +20,10 @@ import {
   Day,
   ItineraryDay,
 } from "../../../reducers/interfaces";
-import { updatePlaces } from "../../../actions/placesActions";
+import {
+  updatePlaces,
+  updateCurrentPlace,
+} from "../../../actions/placesActions";
 import { places } from "../../../resources/constants";
 import { updateDays } from "../../../actions/daysActions";
 import { updateItinerary } from "../../../actions/itineraryActions";
@@ -36,6 +39,7 @@ export interface ConfigurationDispatchProps {
   handleUpdatePlaces: (places: Place[]) => void;
   handleUpdateDays: (days: Day[]) => void;
   handleUpdateMyItinerary: (myItinerary: ItineraryDay[]) => void;
+  handleUpdateCurrentPlace: (place: Place) => void;
 }
 
 export interface ConfigurationOwnProps {}
@@ -88,10 +92,19 @@ class ConfigurationInternal extends React.Component<
       tripType: this.props.request.tripType,
       tripLength: this.props.request.tripLength,
     };
-    console.log(request);
     this.props.handleUpdatePlaces(places);
     this.props.handleUpdateDays(this.createDays());
-    this.props.handleUpdateMyItinerary(this.createMyItinerary());
+
+    const myItinerary = this.createMyItinerary();
+
+    this.props.handleUpdateMyItinerary(myItinerary);
+
+    const itineraryDay = myItinerary.filter(
+      (item: ItineraryDay) => item.dayName === "Day 1"
+    );
+
+    const place = itineraryDay[0].places[0];
+    this.props.handleUpdateCurrentPlace(place);
   };
 
   createMyItinerary = (): ItineraryDay[] => {
@@ -212,6 +225,7 @@ function mapActionToProps(dispatch: any) {
     handleUpdateDays: (v: Day[]) => dispatch(updateDays(v)),
     handleUpdateMyItinerary: (v: ItineraryDay[]) =>
       dispatch(updateItinerary(v)),
+    handleUpdateCurrentPlace: (v: Place) => dispatch(updateCurrentPlace(v)),
   };
 }
 
