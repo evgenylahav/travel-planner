@@ -1,17 +1,22 @@
 import React from "react";
 import { connect } from "react-redux";
+import { ThunkDispatch } from "redux-thunk";
 
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Button from "@material-ui/core/Button";
 import Container from "@material-ui/core/Container";
 import AddLocationIcon from "@material-ui/icons/AddLocation";
+import FolderOpenIcon from "@material-ui/icons/FolderOpen";
 import FlightTakeoffIcon from "@material-ui/icons/FlightTakeoff";
 import { Place, Day, ItineraryDay } from "../../../reducers/interfaces";
 import { updateDays } from "../../../actions/daysActions";
 import { AddPlace } from "./addPlaceDialog";
 import { DaysTabs } from "./daysTabs";
 import AddIcon from "@material-ui/icons/Add";
-import { updateItinerary } from "../../../actions/itineraryActions";
+import {
+  updateItinerary,
+  updateItineraryFromServer,
+} from "../../../actions/itineraryActions";
 
 const classes = require("./itineraryDetails.scss");
 
@@ -58,6 +63,14 @@ export class ItineraryDetailsInternal extends React.Component<
 
   handleCloseAddPlaceDialog = () => {
     this.setState({ showAddPlaceDialog: false });
+  };
+
+  handleLoad = () => {
+    fetch("/get_my_itinerary")
+      .then((res) => res.json())
+      .then((updatedItinerary: ItineraryDay[]) =>
+        this.props.handleUpdateMyItinerary(updatedItinerary)
+      );
   };
 
   handleAddANewDay = () => {
@@ -109,6 +122,16 @@ export class ItineraryDetailsInternal extends React.Component<
             >
               Add Place
             </Button>
+            <Button
+              variant="contained"
+              color="default"
+              className={classes.button}
+              startIcon={<FolderOpenIcon />}
+              onClick={() => this.handleLoad()}
+              style={{ marginRight: "10px", marginBottom: "20px" }}
+            >
+              Load
+            </Button>
             {/* <Button
               variant="contained"
               color="default"
@@ -138,11 +161,11 @@ function mapStateToProps(state: any): ItineraryDetailsStoreProps {
   };
 }
 
-function mapActionToProps(dispatch: any) {
+function mapActionToProps(dispatch: ThunkDispatch<{}, {}, any>) {
   return {
     handleUpdateDays: (s: Day[]) => dispatch(updateDays(s)),
     handleUpdateMyItinerary: (s: ItineraryDay[]) =>
-      dispatch(updateItinerary(s)),
+      dispatch(updateItineraryFromServer(s)),
   };
 }
 
