@@ -2,9 +2,14 @@ import React from "react";
 import { connect } from "react-redux";
 import { ThunkDispatch } from "redux-thunk";
 
-import CssBaseline from "@material-ui/core/CssBaseline";
-import Button from "@material-ui/core/Button";
-import Container from "@material-ui/core/Container";
+import {
+  Fab,
+  Tooltip,
+  CssBaseline,
+  Container,
+  Divider,
+} from "@material-ui/core/";
+
 import AddLocationIcon from "@material-ui/icons/AddLocation";
 import FolderOpenIcon from "@material-ui/icons/FolderOpen";
 import SaveIcon from "@material-ui/icons/Save";
@@ -119,55 +124,58 @@ export class ItineraryDetailsInternal extends React.Component<
           style={{ marginTop: "20px", justifyItems: "center" }}
         >
           <span>
-            <Button
-              variant="contained"
-              color="secondary"
-              startIcon={<AddIcon />}
-              onClick={this.handleAddANewDay}
-              style={{ marginRight: "10px", marginBottom: "20px" }}
-            >
-              Add A New Day
-            </Button>
-            <Button
-              variant="contained"
-              color="default"
-              className={classes.button}
-              startIcon={<AddLocationIcon />}
-              onClick={this.handleAddPlace}
-              style={{ marginRight: "10px", marginBottom: "20px" }}
-            >
-              Add Place
-            </Button>
-            <Button
-              variant="contained"
-              color="default"
-              className={classes.button}
-              startIcon={<FolderOpenIcon />}
-              onClick={() => this.handleLoad()}
-              style={{ marginRight: "10px", marginBottom: "20px" }}
-            >
-              Load
-            </Button>
-            <Button
-              variant="contained"
-              color="default"
-              className={classes.button}
-              startIcon={<SaveIcon />}
-              onClick={() => this.handleSave()}
-              style={{ marginRight: "10px", marginBottom: "20px" }}
-            >
-              Save
-            </Button>
-            {/* <Button
-              variant="contained"
-              color="default"
-              className={classes.button}
-              startIcon={<FlightTakeoffIcon />}
-              onClick={this.handleAddPlace}
-              style={{ marginRight: "10px", marginBottom: "20px" }}
-            >
-              Complete Itinerary
-            </Button> */}
+            <Tooltip title="Add a new day">
+              <Fab
+                variant="extended"
+                size="small"
+                color="primary"
+                className={classes.fab}
+                onClick={this.handleAddANewDay}
+                style={{ marginRight: "10px", marginBottom: "20px" }}
+              >
+                <AddIcon />
+                Add Day
+              </Fab>
+            </Tooltip>
+            <Tooltip title="Add a new place">
+              <Fab
+                color="secondary"
+                size="small"
+                className={classes.fab}
+                onClick={this.handleAddPlace}
+                style={{ marginRight: "10px", marginBottom: "20px" }}
+              >
+                <AddLocationIcon />
+              </Fab>
+            </Tooltip>
+            {/* <Divider orientation="vertical" /> */}
+            <Tooltip title="Load a trip">
+              <Fab
+                color="default"
+                size="small"
+                className={classes.fab}
+                onClick={() => this.handleLoad()}
+                style={{
+                  marginRight: "10px",
+                  marginBottom: "20px",
+                  marginLeft: "40px",
+                }}
+              >
+                <FolderOpenIcon />
+              </Fab>
+            </Tooltip>
+
+            <Tooltip title="Save a trip">
+              <Fab
+                color="default"
+                size="small"
+                className={classes.fab}
+                onClick={() => this.handleSave()}
+                style={{ marginRight: "10px", marginBottom: "20px" }}
+              >
+                <SaveIcon />
+              </Fab>
+            </Tooltip>
           </span>
           <DaysTabs />
           {this.state.showAddPlaceDialog && (
