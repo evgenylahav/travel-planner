@@ -7,6 +7,7 @@ import Button from "@material-ui/core/Button";
 import Container from "@material-ui/core/Container";
 import AddLocationIcon from "@material-ui/icons/AddLocation";
 import FolderOpenIcon from "@material-ui/icons/FolderOpen";
+import SaveIcon from "@material-ui/icons/Save";
 import FlightTakeoffIcon from "@material-ui/icons/FlightTakeoff";
 import { Place, Day, ItineraryDay } from "../../../reducers/interfaces";
 import { updateDays } from "../../../actions/daysActions";
@@ -67,10 +68,25 @@ export class ItineraryDetailsInternal extends React.Component<
 
   handleLoad = () => {
     fetch("/get_my_itinerary")
-      .then((res) => res.json())
+      .then((res: any) => res.json())
       .then((updatedItinerary: ItineraryDay[]) =>
         this.props.handleUpdateMyItinerary(updatedItinerary)
       );
+  };
+
+  handleSave = () => {
+    const { myItinerary } = this.props;
+    console.log(myItinerary);
+    fetch("/update_my_itinerary", {
+      method: "post",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(myItinerary),
+    })
+      .then((res) => res.json())
+      .then((data) => console.log(data));
   };
 
   handleAddANewDay = () => {
@@ -131,6 +147,16 @@ export class ItineraryDetailsInternal extends React.Component<
               style={{ marginRight: "10px", marginBottom: "20px" }}
             >
               Load
+            </Button>
+            <Button
+              variant="contained"
+              color="default"
+              className={classes.button}
+              startIcon={<SaveIcon />}
+              onClick={() => this.handleSave()}
+              style={{ marginRight: "10px", marginBottom: "20px" }}
+            >
+              Save
             </Button>
             {/* <Button
               variant="contained"

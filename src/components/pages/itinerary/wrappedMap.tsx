@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import {
   GoogleMap,
   withScriptjs,
@@ -8,7 +8,7 @@ import {
   InfoWindow,
 } from "react-google-maps";
 import { RootState } from "../../../reducers";
-import { Place } from "../../../reducers/interfaces";
+import { Place, ItineraryDay } from "../../../reducers/interfaces";
 
 type MapProps = {
   children?: React.ReactNode;
@@ -19,10 +19,17 @@ const Map = (props: MapProps) => {
   const [selectedLocation, setSelectedLocation] = useState<Place | any>(null);
 
   const itinerary = useSelector((state: RootState) => state.itinerary);
+  const myItinerary = itinerary.myItinerary;
 
-  const dispatch = useDispatch();
+  const getPlacesFromMyItinerary = () => {
+    return myItinerary
+      .map((itinerary: ItineraryDay) => {
+        return itinerary.places;
+      })
+      .flat();
+  };
 
-  const places = itinerary.places;
+  const places = getPlacesFromMyItinerary();
   const currentPlace = itinerary.currentPlace;
 
   const center = currentPlace
