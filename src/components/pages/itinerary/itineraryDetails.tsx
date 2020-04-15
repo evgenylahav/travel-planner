@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 // import { ThunkDispatch } from "redux-thunk";
-
+import { makeStyles, Theme } from "@material-ui/core/styles";
 import {
   Fab,
   Tooltip,
@@ -22,14 +22,20 @@ import AddIcon from "@material-ui/icons/Add";
 import { updateItineraryFromServer } from "../../../actions/itineraryActions";
 import { RootState } from "../../../reducers";
 
-const classes = require("./itineraryDetails.scss");
-
-export interface ItineraryDetailsDispatchProps {
-  handleUpdateDays: (days: Day[]) => void;
-  handleUpdateMyItinerary: (itinerary: ItineraryDay[]) => void;
-}
+const useStyles = makeStyles((theme: Theme) => ({
+  root: {
+    backgroundColor: theme.palette.background.paper,
+    height: "90%",
+    display: "grid",
+    gridTemplateRows: "80px 400px",
+  },
+  extendedIcon: {
+    marginRight: theme.spacing(1),
+  },
+}));
 
 export function ItineraryDetails() {
+  const classes = useStyles();
   const [showAddPlaceDialog, setShowAddPlaceDialog] = useState(false);
 
   const itinerary = useSelector((state: RootState) => state.itinerary);
@@ -90,17 +96,14 @@ export function ItineraryDetails() {
   return (
     <React.Fragment>
       <CssBaseline />
-      <Container
-        maxWidth="sm"
-        style={{ marginTop: "20px", justifyItems: "center" }}
-      >
-        <span>
+      <Container maxWidth="sm" className={classes.root}>
+        <span style={{ marginTop: "20px", justifyItems: "center" }}>
           <Tooltip title="Add a new day">
             <Fab
               variant="extended"
               size="small"
               color="primary"
-              className={classes.fab}
+              className={classes.extendedIcon}
               onClick={handleAddANewDay}
               style={{ marginRight: "10px", marginBottom: "20px" }}
             >
@@ -112,7 +115,6 @@ export function ItineraryDetails() {
             <Fab
               color="secondary"
               size="small"
-              className={classes.fab}
               onClick={handleAddPlace}
               style={{ marginRight: "10px", marginBottom: "20px" }}
             >
@@ -124,7 +126,6 @@ export function ItineraryDetails() {
             <Fab
               color="default"
               size="small"
-              className={classes.fab}
               onClick={() => handleLoad()}
               style={{
                 marginRight: "10px",
@@ -140,7 +141,6 @@ export function ItineraryDetails() {
             <Fab
               color="default"
               size="small"
-              className={classes.fab}
               onClick={() => handleSave()}
               style={{ marginRight: "10px", marginBottom: "20px" }}
             >
