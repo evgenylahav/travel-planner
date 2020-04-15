@@ -1,18 +1,18 @@
-import React from "react";
+import React, { useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
-import Stepper from "@material-ui/core/Stepper";
-import Step from "@material-ui/core/Step";
-import StepLabel from "@material-ui/core/StepLabel";
-import StepContent from "@material-ui/core/StepContent";
-import Button from "@material-ui/core/Button";
-import Paper from "@material-ui/core/Paper";
-import Typography from "@material-ui/core/Typography";
-
-// import { RootState } from '../../../reducers';
+import {
+  Stepper,
+  Step,
+  StepLabel,
+  StepContent,
+  Button,
+  Paper,
+  Typography,
+} from "@material-ui/core/";
 
 import { getSteps, getStepContent, getStepMenu } from "./configurationUtils";
 
-import { connect } from "react-redux";
 import { updateConfigurationRequest } from "../../../actions/configActions";
 import {
   ConfigurationRequest,
@@ -27,104 +27,43 @@ import {
 import { places } from "../../../resources/constants";
 import { updateDays } from "../../../actions/daysActions";
 import { updateItinerary } from "../../../actions/itineraryActions";
+import { RootState } from "../../../reducers";
 
 const classes = require("./configurationPage.scss");
 
-export interface ConfigurationStoreProps {
-  request: ConfigurationRequest;
-}
+export default function Configuration() {
+  const [activeStep, setActiveStep] = useState(0);
+  const [timeUnits, setTimeUnits] = useState("days");
 
-export interface ConfigurationDispatchProps {
-  handleUpdateConfigurationRequest: (request: ConfigurationRequest) => void;
-  handleUpdatePlaces: (places: Place[]) => void;
-  handleUpdateDays: (days: Day[]) => void;
-  handleUpdateMyItinerary: (myItinerary: ItineraryDay[]) => void;
-  handleUpdateCurrentPlace: (place: Place) => void;
-}
+  const dispatch = useDispatch();
+  const config = useSelector((state: RootState) => state.config);
+  const request = config.request;
 
-export interface ConfigurationOwnProps {}
-
-export type ConfigurationProps = ConfigurationStoreProps &
-  ConfigurationDispatchProps &
-  ConfigurationOwnProps;
-
-export interface ConfigurationState {
-  activeStep: number;
-  timeUnits: string;
-}
-
-class ConfigurationInternal extends React.Component<
-  ConfigurationProps,
-  ConfigurationState
-> {
-  constructor(props: ConfigurationProps, state: ConfigurationState) {
-    super(props, state);
-    this.state = {
-      activeStep: 0,
-      timeUnits: "days",
-    };
-  }
-
-  handleUpdateTimeUnits = (timeUnits: string) => {
-    this.setState({ timeUnits: timeUnits });
+  const handleUpdateTimeUnits = (timeUnits: string) => {
+    setTimeUnits(timeUnits);
   };
 
-  handleNext = () => {
-    this.setState({ activeStep: this.state.activeStep + 1 });
+  const handleNext = () => {
+    setActiveStep(activeStep + 1);
   };
 
-  handleBack = () => {
-    this.setState({ activeStep: this.state.activeStep - 1 });
+  const handleBack = () => {
+    setActiveStep(activeStep - 1);
   };
 
-  handleReset = () => {
-    this.setState({ activeStep: 0 });
-    this.props.handleUpdateConfigurationRequest({
-      participants: "",
-      tripType: "",
-      tripLength: 0,
-    });
-  };
+  const handleReset = () => {
+    setActiveStep(0);
 
-  findTrip = () => {
-    const request = {
-      participants: this.props.request.participants,
-      tripType: this.props.request.tripType,
-      tripLength: this.props.request.tripLength,
-    };
-    this.props.handleUpdatePlaces(places);
-    this.props.handleUpdateDays(this.createDays());
-
-    const myItinerary = this.createMyItinerary();
-
-    this.props.handleUpdateMyItinerary(myItinerary);
-
-    const itineraryDay = myItinerary.filter(
-      (item: ItineraryDay) => item.dayName === "Day 1"
+    dispatch(
+      updateConfigurationRequest({
+        participants: "",
+        tripType: "",
+        tripLength: 0,
+      })
     );
-
-    const place = itineraryDay[0].places[0];
-    this.props.handleUpdateCurrentPlace(place);
   };
 
-  createMyItinerary = (): ItineraryDay[] => {
-    let myItinerary: ItineraryDay[] = [];
-    const days = this.createDays();
-
-    days.forEach((element) => {
-      const placesPerDay: Place[] = places.filter(
-        (item: Place) => item.day === element.name
-      );
-      const itineraryDay: ItineraryDay = {
-        dayName: element.name,
-        places: placesPerDay,
-      };
-      myItinerary.push(itineraryDay);
-    });
-    return myItinerary;
-  };
-
-  createDays = (): Day[] => {
+  const createDays = (): Day[] => {
     const allDays = new Set(places.map((item: Place) => item.day));
     const allDaysArray = Array.from(allDays);
 
@@ -139,101 +78,114 @@ class ConfigurationInternal extends React.Component<
     return days;
   };
 
-  render() {
-    const { activeStep } = this.state;
-    const steps = getSteps();
-    return (
-      <div className={classes.root}>
-        <Stepper activeStep={activeStep} orientation="vertical">
-          {steps.map((label, index) => (
-            <Step key={label}>
-              <StepLabel>{label}</StepLabel>
-              <StepContent>
-                <Typography
-                  className={classes.typography}
-                  style={{ marginBottom: "10px" }}
-                >
-                  {getStepContent(index)}
-                </Typography>
-                {getStepMenu(
-                  index,
-                  this.state.timeUnits,
-                  (s: string) => this.handleUpdateTimeUnits,
-                  this.props
-                )}
-                <div className={classes.actionsContainer}>
-                  <div>
-                    <Button
-                      disabled={activeStep === 0}
-                      onClick={this.handleBack}
-                      className={classes.button}
-                    >
-                      Back
-                    </Button>
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      onClick={this.handleNext}
-                      className={classes.button}
-                    >
-                      {activeStep === steps.length - 1 ? "Finish" : "Next"}
-                    </Button>
-                  </div>
-                </div>
-              </StepContent>
-            </Step>
-          ))}
-        </Stepper>
-        {activeStep === steps.length && (
-          <Paper square elevation={0} className={classes.resetContainer}>
-            <Typography style={{ marginBottom: "10px" }}>
-              All steps completed - you&apos;re finished. Let&apos;s find a trip
-              for you.
-            </Typography>
-            <Button
-              component={Link}
-              to="/itinerary"
-              onClick={this.findTrip}
-              className={classes.button}
-              variant="contained"
-              color="primary"
-            >
-              Find me a Trip
-            </Button>
-            <Button onClick={this.handleReset} className={classes.button}>
-              Reset
-            </Button>
-          </Paper>
-        )}
-      </div>
+  const createMyItinerary = (): ItineraryDay[] => {
+    let myItinerary: ItineraryDay[] = [];
+    const days = createDays();
+
+    days.forEach((element) => {
+      const placesPerDay: Place[] = places.filter(
+        (item: Place) => item.day === element.name
+      );
+      const itineraryDay: ItineraryDay = {
+        dayName: element.name,
+        places: placesPerDay,
+      };
+      myItinerary.push(itineraryDay);
+    });
+    return myItinerary;
+  };
+
+  const findTrip = () => {
+    const request = {
+      participants: config.request.participants,
+      tripType: config.request.tripType,
+      tripLength: config.request.tripLength,
+    };
+    dispatch(updatePlaces(places));
+    dispatch(updateDays(createDays()));
+
+    const myItinerary = createMyItinerary();
+
+    dispatch(updateItinerary(myItinerary));
+
+    const itineraryDay = myItinerary.filter(
+      (item: ItineraryDay) => item.dayName === "Day 1"
     );
-  }
-}
 
-function mapStateToProps(state: any): ConfigurationStoreProps {
-  const configState = state.config;
-  return {
-    request: configState.request,
+    const place = itineraryDay[0].places[0];
+
+    dispatch(updateCurrentPlace(place));
   };
-}
 
-function mapActionToProps(dispatch: any) {
-  return {
-    handleUpdateConfigurationRequest: (s: ConfigurationRequest) =>
-      dispatch(updateConfigurationRequest(s)),
-    handleUpdatePlaces: (v: Place[]) => dispatch(updatePlaces(v)),
-    handleUpdateDays: (v: Day[]) => dispatch(updateDays(v)),
-    handleUpdateMyItinerary: (v: ItineraryDay[]) =>
-      dispatch(updateItinerary(v)),
-    handleUpdateCurrentPlace: (v: Place) => dispatch(updateCurrentPlace(v)),
+  const handleUpdateConfigurationRequest = (request: ConfigurationRequest) => {
+    dispatch(updateConfigurationRequest(request));
   };
-}
 
-export const Configuration = connect<
-  ConfigurationStoreProps,
-  ConfigurationDispatchProps,
-  ConfigurationOwnProps
->(
-  mapStateToProps,
-  mapActionToProps
-)(ConfigurationInternal);
+  const steps = getSteps();
+  return (
+    <div className={classes.root}>
+      <Stepper activeStep={activeStep} orientation="vertical">
+        {steps.map((label, index) => (
+          <Step key={label}>
+            <StepLabel>{label}</StepLabel>
+            <StepContent>
+              <Typography
+                className={classes.typography}
+                style={{ marginBottom: "10px" }}
+              >
+                {getStepContent(index)}
+              </Typography>
+              {getStepMenu(
+                index,
+                timeUnits,
+                (s: string) => handleUpdateTimeUnits,
+                request,
+                (r: ConfigurationRequest) => handleUpdateConfigurationRequest
+              )}
+              <div className={classes.actionsContainer}>
+                <div>
+                  <Button
+                    disabled={activeStep === 0}
+                    onClick={handleBack}
+                    className={classes.button}
+                  >
+                    Back
+                  </Button>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={handleNext}
+                    className={classes.button}
+                  >
+                    {activeStep === steps.length - 1 ? "Finish" : "Next"}
+                  </Button>
+                </div>
+              </div>
+            </StepContent>
+          </Step>
+        ))}
+      </Stepper>
+      {activeStep === steps.length && (
+        <Paper square elevation={0} className={classes.resetContainer}>
+          <Typography style={{ marginBottom: "10px" }}>
+            All steps completed - you&apos;re finished. Let&apos;s find a trip
+            for you.
+          </Typography>
+          <Button
+            component={Link}
+            to="/itinerary"
+            onClick={findTrip}
+            className={classes.button}
+            variant="contained"
+            color="primary"
+          >
+            Find me a Trip
+          </Button>
+          <Button onClick={handleReset} className={classes.button}>
+            Reset
+          </Button>
+        </Paper>
+      )}
+    </div>
+  );
+}

@@ -4,14 +4,15 @@ import Autocomplete from "@material-ui/lab/Autocomplete";
 import {
   tripType,
   tripLength,
-  participants
+  participants,
 } from "../../../resources/constants";
+import { ConfigurationRequest } from "../../../reducers/interfaces";
 
 export const getSteps = () => {
   return [
     "Who is travelling?",
     "What type of a trip do you prefer?",
-    "What would be the length of your trip?"
+    "What would be the length of your trip?",
   ];
 };
 
@@ -31,12 +32,13 @@ export const getStepContent = (step: number) => {
   }
 };
 
-
 export const getStepMenu = (
-  step: number, 
-  timeUnits: string, 
-  updateTimeUnits: (s: string) => {}, 
-  props: any) => {
+  step: number,
+  timeUnits: string,
+  updateTimeUnits: (s: string) => {},
+  request: ConfigurationRequest,
+  updateConfigurationRequest: (r: ConfigurationRequest) => {}
+) => {
   switch (step) {
     case 0:
       return (
@@ -44,19 +46,16 @@ export const getStepMenu = (
           <Autocomplete
             id="participants"
             options={participants}
-            getOptionLabel={option => option.value}
+            getOptionLabel={(option) => option.value}
             style={{ width: 300 }}
-            renderInput={params => (
-              <TextField
-                {...params}
-                label="Participants"
-                variant="outlined"
-              />
+            renderInput={(params) => (
+              <TextField {...params} label="Participants" variant="outlined" />
             )}
             onChange={(e: any, v: any) => {
-              props.handleUpdateConfigurationRequest({
-                ...props.request, participants: v.value
-              })
+              updateConfigurationRequest({
+                ...request,
+                participants: v.value,
+              });
             }}
           />
         </div>
@@ -67,15 +66,16 @@ export const getStepMenu = (
           <Autocomplete
             id="tripType"
             options={tripType}
-            getOptionLabel={option => option.value}
+            getOptionLabel={(option) => option.value}
             style={{ width: 300 }}
-            renderInput={params => (
+            renderInput={(params) => (
               <TextField {...params} label="Trip type" variant="outlined" />
             )}
             onChange={(e: any, v: any) => {
-              props.handleUpdateConfigurationRequest({
-                ...props.request, tripType: v.value
-              })
+              updateConfigurationRequest({
+                ...request,
+                tripType: v.value,
+              });
             }}
           />
         </div>
@@ -88,41 +88,34 @@ export const getStepMenu = (
             label="Trip Length"
             type="number"
             InputLabelProps={{
-              shrink: true
+              shrink: true,
             }}
             style={{ marginRight: "10px" }}
             onChange={(e: any) => {
-              const multiplier = timeUnits === "days"
-                ? 1
-                : 7;
+              const multiplier = timeUnits === "days" ? 1 : 7;
               const tripLength = e.target.value * multiplier;
 
-              props.handleUpdateConfigurationRequest({
-                ...props.request, tripLength: tripLength
-              })
+              updateConfigurationRequest({
+                ...request,
+                tripLength: tripLength,
+              });
             }}
           />
           <Autocomplete
             id="tripLength-units"
             options={tripLength}
-            getOptionLabel={option => option.value}
+            getOptionLabel={(option) => option.value}
             style={{ width: 300 }}
-            renderInput={params => (
-              <TextField
-                {...params}
-                label="Days / Weeks"
-                variant="outlined"
-              />
+            renderInput={(params) => (
+              <TextField {...params} label="Days / Weeks" variant="outlined" />
             )}
             onChange={(e: any, v: any) => {
               updateTimeUnits(v.value);
-              const multiplier = v.value === "days"
-                ? 1
-                : 7;
-              const tripLength = props.request.tripLength * multiplier;
-
-              props.handleUpdateConfigurationRequest({
-                ...props.request, tripLength: tripLength
+              const multiplier = v.value === "days" ? 1 : 7;
+              const tripLength = request.tripLength * multiplier;
+              updateConfigurationRequest({
+                ...request,
+                tripLength: tripLength,
               });
             }}
           />
