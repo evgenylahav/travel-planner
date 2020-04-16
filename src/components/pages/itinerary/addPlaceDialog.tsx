@@ -89,6 +89,7 @@ export function AddPlace(props: any) {
 
     if (updatedItinerary.length === 0) {
       const firstDay: ItineraryDay = {
+        order: 0,
         dayName: dayName,
         places: [newPlace],
       };

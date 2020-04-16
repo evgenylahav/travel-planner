@@ -82,11 +82,12 @@ export default function Configuration() {
     let myItinerary: ItineraryDay[] = [];
     const days = createDays();
 
-    days.forEach((element) => {
+    days.forEach((element, index) => {
       const placesPerDay: Place[] = places.filter(
         (item: Place) => item.day === element.name
       );
       const itineraryDay: ItineraryDay = {
+        order: index,
         dayName: element.name,
         places: placesPerDay,
       };

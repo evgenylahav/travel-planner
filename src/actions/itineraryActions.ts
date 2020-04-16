@@ -4,9 +4,12 @@ import { ItineraryDay, Day } from "../reducers/interfaces";
 import { updateDays } from "./daysActions";
 
 export const updateItinerary = (itinerary: ItineraryDay[]) => {
+  const sortedItinerary = itinerary.sort((a, b) =>
+    a.order > b.order ? 1 : -1
+  );
   return {
     type: UPDATE_ITINERARY,
-    payload: itinerary,
+    payload: sortedItinerary,
   };
 };
 

@@ -132,7 +132,7 @@ export function DaysTabs() {
         })}
       </Tabs>
       <TabPanel value={dayValue} index={dayValue}>
-        <ListOfPlaces day={days[dayValue] ? days[dayValue].name : ""} />
+        <ListOfPlaces />
       </TabPanel>
     </div>
   );

@@ -15,12 +15,14 @@ import FolderOpenIcon from "@material-ui/icons/FolderOpen";
 import SaveIcon from "@material-ui/icons/Save";
 import FlightTakeoffIcon from "@material-ui/icons/FlightTakeoff";
 import { Day, ItineraryDay } from "../../../reducers/interfaces";
-import { updateDays } from "../../../actions/daysActions";
+import { updateDays, updateCurrentDay } from "../../../actions/daysActions";
 import { AddPlace } from "./addPlaceDialog";
+import { ListOfDays } from "./listOfDays";
 import { DaysTabs } from "./daysTabs";
 import AddIcon from "@material-ui/icons/Add";
 import { updateItineraryFromServer } from "../../../actions/itineraryActions";
 import { RootState } from "../../../reducers";
+import { ListOfPlaces } from "./listOfPlaces";
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -28,6 +30,10 @@ const useStyles = makeStyles((theme: Theme) => ({
     height: "90%",
     display: "grid",
     gridTemplateRows: "80px 400px",
+  },
+  daysGrid: {
+    display: "grid",
+    gridTemplateColumns: "1fr 3px 1fr",
   },
   extendedIcon: {
     marginRight: theme.spacing(1),
@@ -80,9 +86,11 @@ export function ItineraryDetails() {
     };
     const newDays = days.concat(newDay);
     dispatch(updateDays(newDays));
+    dispatch(updateCurrentDay(newDay));
 
     // update my itinerary
     const newDayInItinerary: ItineraryDay = {
+      order: myItinerary.length,
       dayName: newDayName,
       places: [],
     };
@@ -97,7 +105,7 @@ export function ItineraryDetails() {
     <React.Fragment>
       <CssBaseline />
       <Container maxWidth="sm" className={classes.root}>
-        <span style={{ marginTop: "20px", justifyItems: "center" }}>
+        <div style={{ marginTop: "20px", justifyItems: "center" }}>
           <Tooltip title="Add a new day">
             <Fab
               variant="extended"
@@ -147,8 +155,13 @@ export function ItineraryDetails() {
               <SaveIcon />
             </Fab>
           </Tooltip>
-        </span>
-        <DaysTabs />
+        </div>
+        <div className={classes.daysGrid}>
+          <ListOfDays />
+          <Divider orientation="vertical" />
+          <ListOfPlaces />
+        </div>
+        {/* <DaysTabs /> */}
         {showAddPlaceDialog && (
           <AddPlace handleClose={handleCloseAddPlaceDialog} />
         )}

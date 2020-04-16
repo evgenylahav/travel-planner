@@ -3,11 +3,13 @@ export interface ApplicationState {
   places: Place[];
   filteredPlaces: Place[];
   currentPlace: Place | null;
+  currentDay: Day | null;
   days: Day[];
   myItinerary: ItineraryDay[];
 }
 
 export interface ItineraryDay {
+  order: number;
   dayName: string;
   places: Place[];
 }

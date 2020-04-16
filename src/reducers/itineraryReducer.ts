@@ -4,6 +4,7 @@ import {
   UPDATE_CURRENT_PLACE,
   UPDATE_FILTERED_PLACES,
   UPDATE_ITINERARY,
+  UPDATE_CURRENT_DAY,
 } from "../actions";
 import { INITIAL_STATE } from "./reducers";
 
@@ -19,6 +20,12 @@ export default (state = INITIAL_STATE, action: any) => {
       return {
         ...state,
         days: action.payload,
+      };
+    }
+    case UPDATE_CURRENT_DAY: {
+      return {
+        ...state,
+        currentDay: action.payload,
       };
     }
     case UPDATE_CURRENT_PLACE: {

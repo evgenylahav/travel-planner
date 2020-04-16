@@ -36,22 +36,20 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-export interface ListOfPlacesProps {
-  day: string;
-}
-
-export function ListOfPlaces(props: ListOfPlacesProps) {
+export function ListOfPlaces() {
   const classes = useStyles();
   const [selectedIndex, setSelectedIndex] = useState(0);
-
-  const { day } = props;
 
   const itinerary = useSelector((state: RootState) => state.itinerary);
 
   const dispatch = useDispatch();
 
   const myItinerary = itinerary.myItinerary;
-  const places = itinerary.places;
+  const currentDay = itinerary.currentDay;
+
+  console.log(currentDay);
+
+  const day = currentDay ? currentDay.name : null;
 
   const selectedDay: ItineraryDay = myItinerary.filter(
     (item: ItineraryDay) => item.dayName === day
@@ -64,6 +62,8 @@ export function ListOfPlaces(props: ListOfPlacesProps) {
   } else {
     selectedPlaces = selectedDay.places;
   }
+
+  console.log(selectedPlaces);
 
   const [showEditPlaceCard, setShowEditPlaceCard] = useState(
     selectedPlaces.map((item: Place) => false)

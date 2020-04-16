@@ -8,6 +8,7 @@ export const UPDATE_FILTERED_PLACES = "UPDATE_FILTERED_PLACES";
 
 // days
 export const UPDATE_DAYS = "UPDATE_DAYS";
+export const UPDATE_CURRENT_DAY = "UPDATE_CURRENT_DAY";
 
 // itinerary
 export const UPDATE_ITINERARY = "UPDATE_ITINERARY";

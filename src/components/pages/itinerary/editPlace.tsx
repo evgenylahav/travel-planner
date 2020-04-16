@@ -50,7 +50,6 @@ export default function EditPlace(props: any) {
     event: React.MouseEvent<HTMLDivElement, MouseEvent>,
     day: Day
   ) => {
-    console.log(day);
     setShowDays(false);
 
     const updatedNewPlace = { ...newPlace, day: day.name };
@@ -74,13 +73,11 @@ export default function EditPlace(props: any) {
 
   const confirm = () => {
     // prepare new itinerary
-    console.log(myItinerary);
 
     const temp: ItineraryDay[] = cloneDeep(myItinerary);
-    console.log(temp);
 
     let updatedItinerary: ItineraryDay[] = cloneDeep(myItinerary);
-    console.log(updatedItinerary);
+
     const edittedDayIndex: number = myItinerary.findIndex(
       (item: ItineraryDay) => item.dayName === place.day
     );
@@ -108,17 +105,8 @@ export default function EditPlace(props: any) {
         (item: Place) => item.day !== place.day
       );
 
-      console.log(edittedDayIndex);
-      console.log(allPlacesInEdittedDay);
-
       edittedDay.places = allPlacesInEdittedDay;
-
-      console.log(edittedDay);
-
-      console.log(updatedItinerary);
       updatedItinerary[edittedDayIndex] = edittedDay;
-
-      console.log(updatedItinerary);
 
       let secondEdittedDay: ItineraryDay = myItinerary.find(
         (item: ItineraryDay) => item.dayName === newPlace.day
@@ -134,8 +122,6 @@ export default function EditPlace(props: any) {
       secondEdittedDay.places = allPlacesInSecondEdittedDay;
       updatedItinerary[edittedSecondDayIndex] = edittedDay;
     }
-
-    console.log(updatedItinerary);
 
     dispatch(updateItinerary(updatedItinerary));
     close();
