@@ -72,16 +72,23 @@ def get_all_trip_names():
     all_trips = {"tripNames": trip_names}
 
     return dumps(all_trips)
-    # last_trip_timestamp = max(timestamps)
-    #
-    # response = db.find_one({"timestamp": last_trip_timestamp})
-    # del response["_id"]
-    # return dumps(response)
 
 
-@main.route('/get_my_itinerary', methods=["GET"])
-def get_my_itinerary():
-    my_itinerary = mongo.db.my_itinerary
-    l = my_itinerary.find({}, {'_id': False})
-    response = dumps(l)
-    return response
+@main.route('/load_itinerary', methods=["POST"])
+def load_itinerary():
+    req_data = request.get_json()
+    trip_name = req_data['tripName']
+
+    db = mongo.db.my_itinerary
+
+    response = db.find_one({'tripName': trip_name})
+    del response["_id"]
+    return dumps(response)
+
+
+# @main.route('/get_my_itinerary', methods=["GET"])
+# def get_my_itinerary():
+#     my_itinerary = mongo.db.my_itinerary
+#     l = my_itinerary.find({}, {'_id': False})
+#     response = dumps(l)
+#     return response

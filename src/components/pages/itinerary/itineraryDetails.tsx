@@ -57,6 +57,8 @@ export function ItineraryDetails() {
   const classes = useStyles();
   const [showAddPlaceDialog, setShowAddPlaceDialog] = useState(false);
   const [showAddNewTrip, setShowAddNewTrip] = useState(false);
+  const [allTrips, setAllTrips] = useState({ tripNames: [] });
+  const [showAllTrips, setShowAllTrips] = useState(false);
 
   const itinerary = useSelector((state: RootState) => state.itinerary);
   const dispatch = useDispatch();
@@ -75,18 +77,15 @@ export function ItineraryDetails() {
     setShowAddPlaceDialog(false);
   };
 
-  // const handleLoad = () => {
-  //   fetch("/get_my_itinerary")
-  //     .then((res: any) => res.json())
-  //     .then((updatedItinerary: ItineraryDay[]) =>
-  //       dispatch(updateItineraryFromServer(updatedItinerary))
-  //     );
-  // };
-
   const handleLoad = () => {
     fetch("/get_all_trip_names")
       .then((res: any) => res.json())
-      .then((data) => console.log(data));
+      .then((data) => {
+        data.tripNames.unshift("");
+        console.log(data);
+        setAllTrips(data);
+        setShowAllTrips(true);
+      });
   };
 
   const handleLoadLast = () => {
@@ -146,6 +145,12 @@ export function ItineraryDetails() {
   const handleCloseAddNewTrip = () => {
     setShowAddNewTrip(false);
   };
+
+  const handleCloseAllTrips = () => {
+    setShowAllTrips(false);
+  };
+
+  console.log(allTrips);
 
   return (
     <React.Fragment>
@@ -226,6 +231,13 @@ export function ItineraryDetails() {
               <FolderOpenIcon />
             </Fab>
           </Tooltip>
+          {/* Show all trips */}
+          {showAllTrips && (
+            <TripSelector
+              trips={allTrips.tripNames}
+              close={handleCloseAllTrips}
+            />
+          )}
 
           <Tooltip title="Save a trip">
             <Fab
