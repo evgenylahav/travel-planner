@@ -1,4 +1,5 @@
 import React from "react";
+import { useSelector, useDispatch } from "react-redux";
 import TextField from "@material-ui/core/TextField";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import {
@@ -13,6 +14,7 @@ export const getSteps = () => {
     "Who is travelling?",
     "What type of a trip do you prefer?",
     "What would be the length of your trip?",
+    "Name your trip",
   ];
 };
 
@@ -27,6 +29,8 @@ export const getStepContent = (step: number) => {
     case 2:
       return `Select the length of your trip. Don't worry - it doesn't have to be
                 exact.`;
+    case 3:
+      return `Give your trip a name. You can always change it later.`;
     default:
       return "Unknown step";
   }
@@ -35,9 +39,9 @@ export const getStepContent = (step: number) => {
 export const getStepMenu = (
   step: number,
   timeUnits: string,
-  updateTimeUnits: (s: string) => {},
-  request: ConfigurationRequest,
-  updateConfigurationRequest: (r: ConfigurationRequest) => {}
+  updateTimeUnits: any,
+  configRequest: ConfigurationRequest,
+  updateConfigurationRequest: any
 ) => {
   switch (step) {
     case 0:
@@ -53,7 +57,7 @@ export const getStepMenu = (
             )}
             onChange={(e: any, v: any) => {
               updateConfigurationRequest({
-                ...request,
+                ...configRequest,
                 participants: v.value,
               });
             }}
@@ -73,7 +77,7 @@ export const getStepMenu = (
             )}
             onChange={(e: any, v: any) => {
               updateConfigurationRequest({
-                ...request,
+                ...configRequest,
                 tripType: v.value,
               });
             }}
@@ -96,7 +100,7 @@ export const getStepMenu = (
               const tripLength = e.target.value * multiplier;
 
               updateConfigurationRequest({
-                ...request,
+                ...configRequest,
                 tripLength: tripLength,
               });
             }}
@@ -112,10 +116,29 @@ export const getStepMenu = (
             onChange={(e: any, v: any) => {
               updateTimeUnits(v.value);
               const multiplier = v.value === "days" ? 1 : 7;
-              const tripLength = request.tripLength * multiplier;
+              const tripLength = configRequest.tripLength * multiplier;
               updateConfigurationRequest({
-                ...request,
+                ...configRequest,
                 tripLength: tripLength,
+              });
+            }}
+          />
+        </div>
+      );
+    case 3:
+      return (
+        <div style={{ display: "flex", marginBottom: "10px" }}>
+          <TextField
+            id="trip-name"
+            label="Name you trip"
+            style={{ marginRight: "10px" }}
+            onChange={(e: any) => {
+              const tripName = e.target.value;
+              console.log(tripName);
+
+              updateConfigurationRequest({
+                ...configRequest,
+                tripName: tripName,
               });
             }}
           />

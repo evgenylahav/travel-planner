@@ -4,8 +4,14 @@ export interface ApplicationState {
   filteredPlaces: Place[];
   currentPlace: Place | null;
   currentDay: Day | null;
+  currentTrip: Trip | null;
   days: Day[];
   myItinerary: ItineraryDay[];
+  myTrips: Trip[];
+}
+
+export interface Trip {
+  tripName: string;
 }
 
 export interface ItineraryDay {
@@ -18,6 +24,7 @@ export interface ConfigurationRequest {
   participants: string;
   tripType: string;
   tripLength: number;
+  tripName: string;
 }
 
 export interface Place {
@@ -41,4 +48,11 @@ export interface PlacePosition {
 export interface Day {
   name: string;
   date?: string;
+}
+
+// rest api
+export interface SaveItineraryRequest {
+  timestamp: number;
+  tripName: string;
+  itinerary: ItineraryDay[];
 }

@@ -174,11 +174,13 @@ export function AddPlace(props: any) {
 
           {/* description */}
           <form className={classes.root} noValidate autoComplete="off">
-            <TextareaAutosize
+            <TextField
+              id="outlined-multiline-flexible"
+              label="Place Description"
+              multiline
               rowsMax={4}
-              aria-label="maximum height"
-              placeholder="Enter desription here..."
               onChange={(e) => setDescription(e.target.value)}
+              variant="outlined"
             />
           </form>
 

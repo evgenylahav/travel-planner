@@ -149,12 +149,14 @@ export default function EditPlace(props: any) {
               />
             </IconButton>
             {showDescription && (
-              <TextareaAutosize
+              <TextField
+                id="outlined-multiline-flexible"
+                label="Place Description"
+                multiline
                 rowsMax={4}
-                aria-label="maximum height"
-                placeholder="Enter desription here..."
                 value={newPlace.description}
                 onChange={(e) => handleDescriptionChange(e.target.value)}
+                variant="outlined"
               />
             )}
           </Typography>

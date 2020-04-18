@@ -12,3 +12,7 @@ export const UPDATE_CURRENT_DAY = "UPDATE_CURRENT_DAY";
 
 // itinerary
 export const UPDATE_ITINERARY = "UPDATE_ITINERARY";
+
+// trips
+export const UPDATE_TRIPS = "UPDATE_TRIPS";
+export const UPDATE_CURRENT_TRIP = "UPDATE_CURRENT_TRIP";

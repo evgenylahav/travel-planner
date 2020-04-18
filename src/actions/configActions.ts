@@ -1,10 +1,11 @@
-import { UPDATE_CONFIGURATION } from '.';
-import { ConfigurationRequest } from '../reducers/interfaces';
-
+import { UPDATE_CONFIGURATION } from ".";
+import { ConfigurationRequest } from "../reducers/interfaces";
 
 export const updateConfigurationRequest = (request: ConfigurationRequest) => {
-    return {
-        type: UPDATE_CONFIGURATION,
-        payload: request
-    }
-}
+  console.log("I'm inside config actions");
+  console.log(request);
+  return {
+    type: UPDATE_CONFIGURATION,
+    payload: request,
+  };
+};

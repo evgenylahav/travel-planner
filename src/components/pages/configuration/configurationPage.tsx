@@ -28,6 +28,7 @@ import { places } from "../../../resources/constants";
 import { updateDays } from "../../../actions/daysActions";
 import { updateItinerary } from "../../../actions/itineraryActions";
 import { RootState } from "../../../reducers";
+import { addTripToDB, updateCurrentTrip } from "../../../actions/tripsActons";
 
 const classes = require("./configurationPage.scss");
 
@@ -37,7 +38,7 @@ export default function Configuration() {
 
   const dispatch = useDispatch();
   const config = useSelector((state: RootState) => state.config);
-  const request = config.request;
+  const configRequest = config.request;
 
   const handleUpdateTimeUnits = (timeUnits: string) => {
     setTimeUnits(timeUnits);
@@ -59,6 +60,7 @@ export default function Configuration() {
         participants: "",
         tripType: "",
         tripLength: 0,
+        tripName: "",
       })
     );
   };
@@ -97,11 +99,12 @@ export default function Configuration() {
   };
 
   const findTrip = () => {
-    const request = {
-      participants: config.request.participants,
-      tripType: config.request.tripType,
-      tripLength: config.request.tripLength,
-    };
+    console.log(configRequest);
+    // const configRequest = {
+    //   participants: request.participants,
+    //   tripType: request.tripType,
+    //   tripLength: request.tripLength,
+    // };
     dispatch(updatePlaces(places));
     dispatch(updateDays(createDays()));
 
@@ -116,13 +119,20 @@ export default function Configuration() {
     const place = itineraryDay[0].places[0];
 
     dispatch(updateCurrentPlace(place));
+
+    const currentTrip = { tripName: configRequest.tripName };
+    console.log(currentTrip);
+    dispatch(updateCurrentTrip(currentTrip));
+    dispatch(addTripToDB(currentTrip.tripName));
   };
 
   const handleUpdateConfigurationRequest = (request: ConfigurationRequest) => {
+    console.log(request);
     dispatch(updateConfigurationRequest(request));
   };
 
   const steps = getSteps();
+  console.log(configRequest);
   return (
     <div className={classes.root}>
       <Stepper activeStep={activeStep} orientation="vertical">
@@ -139,9 +149,9 @@ export default function Configuration() {
               {getStepMenu(
                 index,
                 timeUnits,
-                (s: string) => handleUpdateTimeUnits,
-                request,
-                (r: ConfigurationRequest) => handleUpdateConfigurationRequest
+                handleUpdateTimeUnits,
+                configRequest,
+                (r: any) => handleUpdateConfigurationRequest
               )}
               <div className={classes.actionsContainer}>
                 <div>
