@@ -65,7 +65,10 @@ export default function TripSelector(props: any) {
       body: JSON.stringify(loadReq),
     })
       .then((res: any) => res.json())
-      .then((data) => dispatch(updateItineraryFromServer(data.itinerary)));
+      .then((data) => {
+        dispatch(updateItineraryFromServer(data.itinerary));
+        dispatch(updateCurrentTrip({ tripName: data.tripName }));
+      });
   };
 
   const handleChange = (event: React.ChangeEvent<{ value: unknown }>) => {

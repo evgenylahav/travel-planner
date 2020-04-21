@@ -1,7 +1,7 @@
 import { UPDATE_ITINERARY } from ".";
 import Redux from "redux";
 import { ItineraryDay, Day } from "../reducers/interfaces";
-import { updateDays } from "./daysActions";
+import { updateDays, updateCurrentDay, updateDayAndPlace } from "./daysActions";
 
 export const updateItinerary = (itinerary: ItineraryDay[]) => {
   const sortedItinerary = itinerary.sort((a, b) =>
@@ -27,4 +27,8 @@ export const updateItineraryFromServer = (myItinerary: ItineraryDay[]) => (
   });
   dispatch(updateDays(days));
   dispatch(updateItinerary(myItinerary));
+
+  if (myItinerary.length > 0) {
+    dispatch(updateDayAndPlace(myItinerary[0]));
+  }
 };

@@ -12,6 +12,7 @@ import {
   CssBaseline,
   AppBar,
   Toolbar,
+  Tooltip,
   List,
   Typography,
   Divider,
@@ -20,11 +21,11 @@ import {
   ListItemText,
   Button,
 } from "@material-ui/core";
+import Main from "./main";
 
 import IconButton from "@material-ui/core/IconButton";
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import ChevronRightIcon from "@material-ui/icons/ChevronRight";
-import InboxIcon from "@material-ui/icons/MoveToInbox";
 import MenuIcon from "@material-ui/icons/Menu";
 import AddIcon from "@material-ui/icons/Add";
 import EditIcon from "@material-ui/icons/Edit";
@@ -38,6 +39,8 @@ import { updateCurrentTrip } from "../actions/tripsActons";
 import TripSelector from "../components/pages/itinerary/tripSelector";
 import { SaveItineraryRequest } from "../reducers/interfaces";
 import { RootState } from "../reducers";
+import { updateCurrentDay } from "../actions/daysActions";
+import { updateCurrentPlace } from "../actions/placesActions";
 
 const drawerWidth = 240;
 
@@ -50,6 +53,7 @@ const useStyles = makeStyles((theme: Theme) =>
       flexGrow: 1,
     },
     appBar: {
+      zIndex: theme.zIndex.drawer + 1,
       transition: theme.transitions.create(["margin", "width"], {
         easing: theme.transitions.easing.sharp,
         duration: theme.transitions.duration.leavingScreen,
@@ -64,7 +68,7 @@ const useStyles = makeStyles((theme: Theme) =>
       }),
     },
     menuButton: {
-      marginRight: theme.spacing(2),
+      marginRight: 36,
     },
     hide: {
       display: "none",
@@ -72,9 +76,28 @@ const useStyles = makeStyles((theme: Theme) =>
     drawer: {
       width: drawerWidth,
       flexShrink: 0,
+      whiteSpace: "nowrap",
     },
     drawerPaper: {
       width: drawerWidth,
+    },
+    drawerOpen: {
+      width: drawerWidth,
+      transition: theme.transitions.create("width", {
+        easing: theme.transitions.easing.sharp,
+        duration: theme.transitions.duration.enteringScreen,
+      }),
+    },
+    drawerClose: {
+      transition: theme.transitions.create("width", {
+        easing: theme.transitions.easing.sharp,
+        duration: theme.transitions.duration.leavingScreen,
+      }),
+      overflowX: "hidden",
+      width: theme.spacing(7) + 1,
+      [theme.breakpoints.up("sm")]: {
+        width: 55,
+      },
     },
     drawerHeader: {
       display: "flex",
@@ -90,7 +113,7 @@ const useStyles = makeStyles((theme: Theme) =>
         easing: theme.transitions.easing.sharp,
         duration: theme.transitions.duration.leavingScreen,
       }),
-      marginLeft: -drawerWidth,
+      // marginLeft: -drawerWidth,
     },
     contentShift: {
       transition: theme.transitions.create("margin", {
@@ -181,7 +204,6 @@ export default function HeaderNew() {
       .then((res: any) => res.json())
       .then((data) => {
         data.tripNames.unshift("");
-        console.log(data);
         setAllTrips(data);
         setShowAllTrips(true);
       });
@@ -220,7 +242,9 @@ export default function HeaderNew() {
             aria-label="open drawer"
             onClick={handleDrawerOpen}
             edge="start"
-            className={clsx(classes.menuButton, open && classes.hide)}
+            className={clsx(classes.menuButton, {
+              [classes.hide]: open,
+            })}
           >
             <MenuIcon />
           </IconButton>
@@ -232,12 +256,16 @@ export default function HeaderNew() {
         </Toolbar>
       </AppBar>
       <Drawer
-        className={classes.drawer}
-        variant="persistent"
-        anchor="left"
-        open={open}
+        variant="permanent"
+        className={clsx(classes.drawer, {
+          [classes.drawerOpen]: open,
+          [classes.drawerClose]: !open,
+        })}
         classes={{
-          paper: classes.drawerPaper,
+          paper: clsx({
+            [classes.drawerOpen]: open,
+            [classes.drawerClose]: !open,
+          }),
         }}
       >
         <div className={classes.drawerHeader}>
@@ -252,27 +280,31 @@ export default function HeaderNew() {
         <Divider />
         <List>
           {topMenu.map((text, index) => (
-            <ListItem
-              button
-              key={text}
-              onClick={(event) => handleClick(event, text)}
-            >
-              <ListItemIcon>{topIcons[index]}</ListItemIcon>
-              <ListItemText primary={text} />
-            </ListItem>
+            <Tooltip title={text}>
+              <ListItem
+                button
+                key={text}
+                onClick={(event) => handleClick(event, text)}
+              >
+                <ListItemIcon>{topIcons[index]}</ListItemIcon>
+                <ListItemText primary={text} />
+              </ListItem>
+            </Tooltip>
           ))}
         </List>
         <Divider />
         <List>
           {bottomMenu.map((text, index) => (
-            <ListItem
-              button
-              key={text}
-              onClick={(event) => handleClick(event, text)}
-            >
-              <ListItemIcon>{bottomIcons[index]}</ListItemIcon>
-              <ListItemText primary={text} />
-            </ListItem>
+            <Tooltip title={text}>
+              <ListItem
+                button
+                key={text}
+                onClick={(event) => handleClick(event, text)}
+              >
+                <ListItemIcon>{bottomIcons[index]}</ListItemIcon>
+                <ListItemText primary={text} />
+              </ListItem>
+            </Tooltip>
           ))}
         </List>
       </Drawer>
@@ -282,6 +314,7 @@ export default function HeaderNew() {
         })}
       >
         <div className={classes.drawerHeader} />
+        <Main />
       </main>
 
       {/* Add new trip */}

@@ -9,18 +9,13 @@ import {
   Container,
   Divider,
   Typography,
-  IconButton,
 } from "@material-ui/core/";
 
 import AddLocationIcon from "@material-ui/icons/AddLocation";
 import FolderOpenIcon from "@material-ui/icons/FolderOpen";
 import SaveIcon from "@material-ui/icons/Save";
 // import FlightTakeoffIcon from "@material-ui/icons/FlightTakeoff";
-import {
-  Day,
-  ItineraryDay,
-  SaveItineraryRequest,
-} from "../../../reducers/interfaces";
+import { Day, ItineraryDay } from "../../../reducers/interfaces";
 import { updateDays, updateCurrentDay } from "../../../actions/daysActions";
 import { AddPlace } from "./addPlaceDialog";
 import { ListOfDays } from "./listOfDays";

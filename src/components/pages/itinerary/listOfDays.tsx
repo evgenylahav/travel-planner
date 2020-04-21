@@ -15,7 +15,7 @@ import EditIcon from "@material-ui/icons/Edit";
 
 import Tooltip from "@material-ui/core/Tooltip";
 
-import { ItineraryDay, Day } from "../../../reducers/interfaces";
+import { ItineraryDay, Day, Place } from "../../../reducers/interfaces";
 import { RootState } from "../../../reducers";
 import { Container, Draggable } from "react-smooth-dnd";
 import arrayMove from "array-move";
@@ -23,6 +23,7 @@ import DragHandleIcon from "@material-ui/icons/DragHandle";
 import { updateItinerary } from "../../../actions/itineraryActions";
 import { updateCurrentDay, updateDays } from "../../../actions/daysActions";
 import EditDay from "./editDay";
+import { updateCurrentPlace } from "../../../actions/placesActions";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -55,17 +56,12 @@ export function ListOfDays(props: any) {
   };
 
   const onDrop = ({ removedIndex, addedIndex }: any) => {
-    console.log(myItinerary);
     const newListOfDays: Day[] = arrayMove(days, removedIndex, addedIndex);
-    console.log(newListOfDays);
-    console.log(removedIndex);
-    console.log(addedIndex);
     dispatch(updateDays(newListOfDays));
 
     const updatedItinerary: ItineraryDay[] = myItinerary.map(
       (item: ItineraryDay) => {
         const newIndex = findWithAttr(newListOfDays, "name", item.dayName);
-        console.log(newIndex);
         return { ...item, order: newIndex };
       }
     );
@@ -91,6 +87,13 @@ export function ListOfDays(props: any) {
   ) => {
     setSelectedIndex(index);
     dispatch(updateCurrentDay(day));
+    const itineraryDay: ItineraryDay[] = myItinerary.filter(
+      (item: ItineraryDay) => item.dayName === day.name
+    );
+    const places: Place[] = itineraryDay[0].places;
+    if (places.length > 0) {
+      dispatch(updateCurrentPlace(places[0]));
+    }
   };
 
   const handleShowEdit = () => {

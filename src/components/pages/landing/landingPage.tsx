@@ -7,7 +7,8 @@ const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
       "& .MuiTextField-root": {
-        margin: theme.spacing(1),
+        margin: theme.spacing(3),
+        marginTop: 100,
         width: "25ch",
       },
     },
