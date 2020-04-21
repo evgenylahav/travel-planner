@@ -15,20 +15,23 @@ def index():
 
 @main.route('/update_my_itinerary', methods=["POST"])
 def update_my_itinerary():
-    req_data = request.get_json()
-    print(type(req_data))
+    try:
+        req_data = request.get_json()
+        print(type(req_data))
 
-    for key, value in req_data.items():
-        print(key, value)
+        for key, value in req_data.items():
+            print(key, value)
 
-    trip_name = req_data['tripName']
-    print(trip_name)
+        trip_name = req_data['tripName']
+        print(trip_name)
 
-    my_itinerary = mongo.db.my_itinerary
-    my_itinerary.replace_one({'tripName': trip_name}, req_data)
-    # my_itinerary.insert(req_data)
+        my_itinerary = mongo.db.my_itinerary
+        my_itinerary.replace_one({'tripName': trip_name}, req_data)
+        # my_itinerary.insert(req_data)
 
-    return {'message': "succeeded"}
+        return {'message': "success"}
+    except:
+        return {'message': "error"}
 
 
 @main.route('/create_new_trip', methods=["POST"])
@@ -84,7 +87,6 @@ def load_itinerary():
     response = db.find_one({'tripName': trip_name})
     del response["_id"]
     return dumps(response)
-
 
 # @main.route('/get_my_itinerary', methods=["GET"])
 # def get_my_itinerary():

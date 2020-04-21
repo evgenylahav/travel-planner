@@ -46,6 +46,11 @@ export function ListOfDays(props: any) {
   const myItinerary = itinerary.myItinerary;
   const days = itinerary.days;
 
+  let dayName = "";
+  if (days.length > 0) {
+    dayName = days[selectedIndex].name;
+  }
+
   const findWithAttr = (array: any, attr: any, value: any) => {
     for (let i = 0; i < array.length; i += 1) {
       if (array[i][attr] === value) {
@@ -183,7 +188,7 @@ export function ListOfDays(props: any) {
       <EditDay
         show={showEditDays}
         close={handleCloseEdit}
-        dayName={days.length === 0 ? "" : days[selectedIndex].name}
+        dayName={dayName}
         updateDayName={(s: string) => handleEditDayName(s)}
       />
     </div>

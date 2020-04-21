@@ -20,7 +20,10 @@ import {
   ListItemIcon,
   ListItemText,
   Button,
+  Snackbar,
 } from "@material-ui/core";
+
+import MuiAlert, { AlertProps } from "@material-ui/lab/Alert";
 import Main from "./main";
 
 import IconButton from "@material-ui/core/IconButton";
@@ -43,6 +46,10 @@ import { updateCurrentDay } from "../actions/daysActions";
 import { updateCurrentPlace } from "../actions/placesActions";
 
 const drawerWidth = 240;
+
+function Alert(props: AlertProps) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -132,6 +139,10 @@ export default function HeaderNew() {
   const [showAddNewTrip, setShowAddNewTrip] = useState(false);
   const [allTrips, setAllTrips] = useState({ tripNames: [] });
   const [showAllTrips, setShowAllTrips] = useState(false);
+  const [openSaveNotifier, setOpenSaveNotifier] = useState(false);
+  const [severity, setSevirity] = useState<
+    "success" | "info" | "warning" | "error" | undefined
+  >("success");
 
   const dispatch = useDispatch();
 
@@ -190,6 +201,10 @@ export default function HeaderNew() {
     setShowAllTrips(false);
   };
 
+  const handleCloseSaveNotifier = () => {
+    setOpenSaveNotifier(false);
+  };
+
   const handleLoadLast = () => {
     fetch("/load_last_trip")
       .then((res: any) => res.json())
@@ -224,7 +239,10 @@ export default function HeaderNew() {
       body: JSON.stringify(saveReq),
     })
       .then((res) => res.json())
-      .then((data) => console.log(data));
+      .then((data) => {
+        setOpenSaveNotifier(true);
+        setSevirity(data.message);
+      });
   };
 
   return (
@@ -324,6 +342,17 @@ export default function HeaderNew() {
       {showAllTrips && (
         <TripSelector trips={allTrips.tripNames} close={handleCloseAllTrips} />
       )}
+      <Snackbar
+        open={openSaveNotifier}
+        autoHideDuration={3000}
+        onClose={handleCloseSaveNotifier}
+      >
+        <Alert onClose={handleCloseSaveNotifier} severity={severity}>
+          {severity === "success"
+            ? "Trip saved successfully!"
+            : "Trip save failed"}
+        </Alert>
+      </Snackbar>
     </div>
   );
 }
