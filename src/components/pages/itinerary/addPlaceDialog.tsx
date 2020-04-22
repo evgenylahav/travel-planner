@@ -2,18 +2,21 @@ import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { makeStyles } from "@material-ui/core/styles";
 
-import Tooltip from "@material-ui/core/Tooltip";
-import TextareaAutosize from "@material-ui/core/TextareaAutosize";
-import Button from "@material-ui/core/Button";
-import Dialog from "@material-ui/core/Dialog";
-import DialogActions from "@material-ui/core/DialogActions";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogTitle from "@material-ui/core/DialogTitle";
-import Paper from "@material-ui/core/Paper";
+import {
+  Box,
+  Tooltip,
+  TextareaAutosize,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Paper,
+  TextField,
+} from "@material-ui/core";
+
 import Draggable from "react-draggable";
 import { Place, ItineraryDay } from "../../../reducers/interfaces";
-import TextField from "@material-ui/core/TextField";
-
 import { DaySelector } from "./daySelector";
 import { RootState } from "../../../reducers";
 import {
@@ -23,6 +26,8 @@ import {
 import { LocationsAutoComplete } from "./locationsAutoComplete";
 import { TogglePlaceType } from "./togglePlaceType";
 import { updateItinerary } from "../../../actions/itineraryActions";
+
+import { WrappedMap } from "./wrappedMap";
 
 function PaperComponent(props: any) {
   return (
@@ -36,6 +41,10 @@ function PaperComponent(props: any) {
 }
 
 const useStyles = makeStyles((theme) => ({
+  layout: {
+    display: "grid",
+    gridTemplateColumns: "2fr 5fr",
+  },
   root: {
     "& > *": {
       margin: theme.spacing(1),
@@ -151,48 +160,68 @@ export function AddPlace(props: any) {
           Add a Place
         </DialogTitle>
         <DialogContent>
-          {/* hotel or place */}
-          <form className={classes.root}>
-            <TogglePlaceType
-              inputPlace={"place"}
-              handlePlaceType={(placeType: string) =>
-                handlePlaceType(placeType)
-              }
-            />
-          </form>
+          <div className={classes.layout}>
+            {/* Forms */}
+            <div>
+              {/* hotel or place */}
+              <form className={classes.root}>
+                <TogglePlaceType
+                  inputPlace={"place"}
+                  handlePlaceType={(placeType: string) =>
+                    handlePlaceType(placeType)
+                  }
+                />
+              </form>
 
-          {/* day selector */}
-          <DaySelector selectDay={(day: string) => setSelectedDay(day)} />
+              {/* day selector */}
+              <DaySelector selectDay={(day: string) => setSelectedDay(day)} />
 
-          {/* place selector */}
-          <form className={classes.root} noValidate autoComplete="off">
-            <LocationsAutoComplete
-              setPlaceName={(name: string) => setPlaceName(name)}
-              setPosition={(p: any) => setPosition(p)}
-            />
-          </form>
+              {/* place selector */}
+              <form className={classes.root} noValidate autoComplete="off">
+                <LocationsAutoComplete
+                  setPlaceName={(name: string) => setPlaceName(name)}
+                  setPosition={(p: any) => setPosition(p)}
+                />
+              </form>
 
-          {/* description */}
-          <form className={classes.root} noValidate autoComplete="off">
-            <TextField
-              id="outlined-multiline-flexible"
-              label="Place Description"
-              multiline
-              rowsMax={4}
-              onChange={(e) => setDescription(e.target.value)}
-              variant="outlined"
-            />
-          </form>
+              {/* description */}
+              <form className={classes.root} noValidate autoComplete="off">
+                <TextField
+                  id="outlined-multiline-flexible"
+                  label="Place Description"
+                  multiline
+                  rowsMax={4}
+                  onChange={(e) => setDescription(e.target.value)}
+                  variant="outlined"
+                />
+              </form>
 
-          {/* website */}
-          <form className={classes.root} noValidate autoComplete="off">
-            <TextField
-              id="outlined-basic"
-              label="Web-site"
-              variant="outlined"
-              onChange={(e) => setWebsite(e.target.value)}
-            />
-          </form>
+              {/* website */}
+              <form className={classes.root} noValidate autoComplete="off">
+                <TextField
+                  id="outlined-basic"
+                  label="Web-site"
+                  variant="outlined"
+                  onChange={(e) => setWebsite(e.target.value)}
+                />
+              </form>
+            </div>
+
+            {/* Map */}
+            <div>
+              <Box component="div" m={1}>
+                <div style={{ height: "90vh", width: "90vm" }}>
+                  <WrappedMap
+                    googleMapURL={`https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=
+            geometry,drawing,places&key=${process.env.REACT_APP_GOOGLE_KEY}`}
+                    loadingElement={<div style={{ height: "100%" }} />}
+                    containerElement={<div style={{ height: "100%" }} />}
+                    mapElement={<div style={{ height: "100%" }} />}
+                  />
+                </div>
+              </Box>
+            </div>
+          </div>
         </DialogContent>
         <DialogActions>
           <Button autoFocus onClick={handleClose} color="primary">

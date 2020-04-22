@@ -1,4 +1,5 @@
 import React from "react";
+import { useDispatch, useSelector } from "react-redux";
 import PlacesAutocomplete, {
   geocodeByAddress,
   getLatLng,
@@ -6,9 +7,12 @@ import PlacesAutocomplete, {
 import TextField from "@material-ui/core/TextField";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
+import { Place } from "../../../reducers/interfaces";
+import { updateCurrentPlace } from "../../../actions/placesActions";
 
 export function LocationsAutoComplete(props: any) {
   const [address, setAddress] = React.useState("");
+  const dispatch = useDispatch();
 
   const { setPlaceName, setPosition } = props;
 
@@ -17,6 +21,16 @@ export function LocationsAutoComplete(props: any) {
     const latLng = await getLatLng(results[0]);
     setPosition(latLng);
     setPlaceName(value);
+
+    const inspectedPlace: Place = {
+      id: 500,
+      name: value,
+      sleeping: false,
+      position: latLng,
+      day: "",
+      description: "",
+    };
+    dispatch(updateCurrentPlace(inspectedPlace));
   };
 
   return (

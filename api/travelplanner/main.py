@@ -1,6 +1,5 @@
 from flask import Blueprint, jsonify, request
 from .extensions import mongo
-import time
 from bson.json_util import dumps, loads
 
 main = Blueprint('main', __name__)
@@ -27,7 +26,6 @@ def update_my_itinerary():
 
         my_itinerary = mongo.db.my_itinerary
         my_itinerary.replace_one({'tripName': trip_name}, req_data)
-        # my_itinerary.insert(req_data)
 
         return {'message': "success"}
     except:
@@ -87,10 +85,3 @@ def load_itinerary():
     response = db.find_one({'tripName': trip_name})
     del response["_id"]
     return dumps(response)
-
-# @main.route('/get_my_itinerary', methods=["GET"])
-# def get_my_itinerary():
-#     my_itinerary = mongo.db.my_itinerary
-#     l = my_itinerary.find({}, {'_id': False})
-#     response = dumps(l)
-#     return response
