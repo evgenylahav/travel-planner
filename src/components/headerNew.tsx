@@ -2,40 +2,20 @@ import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import clsx from "clsx";
+import { makeStyles, Theme, createStyles } from "@material-ui/core/styles";
 import {
-  makeStyles,
-  useTheme,
-  Theme,
-  createStyles,
-} from "@material-ui/core/styles";
-import {
-  Drawer,
   CssBaseline,
   AppBar,
   Toolbar,
-  Tooltip,
-  List,
   Typography,
-  Divider,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
   Button,
   Snackbar,
+  IconButton,
 } from "@material-ui/core";
 
 import MuiAlert, { AlertProps } from "@material-ui/lab/Alert";
 import Main from "./main";
-
-import IconButton from "@material-ui/core/IconButton";
-import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
-import ChevronRightIcon from "@material-ui/icons/ChevronRight";
 import MenuIcon from "@material-ui/icons/Menu";
-import AddIcon from "@material-ui/icons/Add";
-import EditIcon from "@material-ui/icons/Edit";
-import SaveIcon from "@material-ui/icons/Save";
-import ListIcon from "@material-ui/icons/List";
-import FolderOpenIcon from "@material-ui/icons/FolderOpen";
 
 import AddTrip from "../components/pages/itinerary/addTrip";
 import { updateItineraryFromServer } from "../actions/itineraryActions";
@@ -43,9 +23,8 @@ import { updateCurrentTrip } from "../actions/tripsActons";
 import TripSelector from "../components/pages/itinerary/tripSelector";
 import { SaveItineraryRequest } from "../reducers/interfaces";
 import { RootState } from "../reducers";
-import { updateCurrentDay } from "../actions/daysActions";
-import { updateCurrentPlace } from "../actions/placesActions";
 import { updateLoggedIn } from "../actions/authActions";
+import ActionsDrawer from "./actionsDrawer";
 
 const drawerWidth = 240;
 
@@ -82,32 +61,6 @@ const useStyles = makeStyles((theme: Theme) =>
     hide: {
       display: "none",
     },
-    drawer: {
-      width: drawerWidth,
-      flexShrink: 0,
-      whiteSpace: "nowrap",
-    },
-    drawerPaper: {
-      width: drawerWidth,
-    },
-    drawerOpen: {
-      width: drawerWidth,
-      transition: theme.transitions.create("width", {
-        easing: theme.transitions.easing.sharp,
-        duration: theme.transitions.duration.enteringScreen,
-      }),
-    },
-    drawerClose: {
-      transition: theme.transitions.create("width", {
-        easing: theme.transitions.easing.sharp,
-        duration: theme.transitions.duration.leavingScreen,
-      }),
-      overflowX: "hidden",
-      width: theme.spacing(7) + 1,
-      [theme.breakpoints.up("sm")]: {
-        width: 55,
-      },
-    },
     drawerHeader: {
       display: "flex",
       alignItems: "center",
@@ -136,7 +89,6 @@ const useStyles = makeStyles((theme: Theme) =>
 
 export default function HeaderNew() {
   const classes = useStyles();
-  const theme = useTheme();
   const [open, setOpen] = useState(false);
   const [showAddNewTrip, setShowAddNewTrip] = useState(false);
   const [allTrips, setAllTrips] = useState({ tripNames: [] });
@@ -161,41 +113,6 @@ export default function HeaderNew() {
 
   const handleDrawerClose = () => {
     setOpen(false);
-  };
-
-  const topIcons = [<AddIcon />, <EditIcon />];
-  const topMenu = ["Create a New Trip", "Edit Trip Name"];
-
-  const bottomIcons = [<FolderOpenIcon />, <ListIcon />, <SaveIcon />];
-  const bottomMenu = [
-    "Load Last Trip",
-    "Load Trip from List",
-    "Save Trip to DB",
-  ];
-
-  const handleClick = (
-    event: React.MouseEvent<HTMLDivElement, MouseEvent>,
-    text: string
-  ) => {
-    console.log(text);
-    switch (text) {
-      case "Create a New Trip":
-        setShowAddNewTrip(true);
-        handleDrawerClose();
-        break;
-      case "Load Last Trip":
-        handleLoadLast();
-        handleDrawerClose();
-        break;
-      case "Load Trip from List":
-        handleGetAllTripsNamesFromDatabase();
-        handleDrawerClose();
-        break;
-      case "Save Trip to DB":
-        handleSaveTripToDB();
-        handleDrawerClose();
-        break;
-    }
   };
 
   const handleCloseAddNewTrip = () => {
@@ -309,63 +226,20 @@ export default function HeaderNew() {
               Sign Out
             </Button>
           )}
-          {/* <Button color="inherit">Login</Button> */}
-          {/* <Button color="inherit">Sign Up</Button> */}
         </Toolbar>
       </AppBar>
-      <Drawer
-        variant="permanent"
-        className={clsx(classes.drawer, {
-          [classes.drawerOpen]: open,
-          [classes.drawerClose]: !open,
-        })}
-        classes={{
-          paper: clsx({
-            [classes.drawerOpen]: open,
-            [classes.drawerClose]: !open,
-          }),
-        }}
-      >
-        <div className={classes.drawerHeader}>
-          <IconButton onClick={handleDrawerClose}>
-            {theme.direction === "ltr" ? (
-              <ChevronLeftIcon />
-            ) : (
-              <ChevronRightIcon />
-            )}
-          </IconButton>
-        </div>
-        <Divider />
-        <List>
-          {topMenu.map((text, index) => (
-            <Tooltip title={text}>
-              <ListItem
-                button
-                key={text}
-                onClick={(event) => handleClick(event, text)}
-              >
-                <ListItemIcon>{topIcons[index]}</ListItemIcon>
-                <ListItemText primary={text} />
-              </ListItem>
-            </Tooltip>
-          ))}
-        </List>
-        <Divider />
-        <List>
-          {bottomMenu.map((text, index) => (
-            <Tooltip title={text}>
-              <ListItem
-                button
-                key={text}
-                onClick={(event) => handleClick(event, text)}
-              >
-                <ListItemIcon>{bottomIcons[index]}</ListItemIcon>
-                <ListItemText primary={text} />
-              </ListItem>
-            </Tooltip>
-          ))}
-        </List>
-      </Drawer>
+      {loggedIn && (
+        <ActionsDrawer
+          open={open}
+          handleDrawerClose={handleDrawerClose}
+          handleSaveTripToDB={handleSaveTripToDB}
+          setShowAddNewTrip={setShowAddNewTrip}
+          handleLoadLast={handleLoadLast}
+          handleGetAllTripsNamesFromDatabase={
+            handleGetAllTripsNamesFromDatabase
+          }
+        />
+      )}
       <main
         className={clsx(classes.content, {
           [classes.contentShift]: open,

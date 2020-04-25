@@ -84,7 +84,7 @@ export default function Login() {
       .then((res: any) => res.json())
       .then((data) => {
         dispatch(updateLoggedIn(data.status));
-        history.push("/");
+        history.push("/itinerary");
       });
   };
 
