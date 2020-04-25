@@ -1,5 +1,6 @@
 from flask import Blueprint, jsonify, request
 from .extensions import mongo
+from passlib.hash import sha256_crypt
 from bson.json_util import dumps, loads
 
 main = Blueprint('main', __name__)
@@ -85,3 +86,43 @@ def load_itinerary():
     response = db.find_one({'tripName': trip_name})
     del response["_id"]
     return dumps(response)
+
+
+@main.route('/register', methods=['POST'])
+def register():
+
+    users = mongo.db.users
+
+    req_data = request.get_json()
+    first_name = req_data['firstName']
+    last_name = req_data['lastName']
+    password = req_data['password']
+    email = req_data['email']
+
+    existing_user = users.find_one({'email': email})
+
+    if existing_user is None:
+        password = sha256_crypt.encrypt(password)
+        users.insert({'firstName': first_name,  'lastName': last_name, 'password': password, 'email': email})
+        print("returning status success")
+        return {"status": True, "message": "Signup completed successfully"}
+
+    print("returning status failure")
+    return {"status": False, "message": "There is already an account for this email"}
+
+
+@main.route('/login_to', methods=['POST'])
+def login_to():
+    users = mongo.db.users
+
+    req_data = request.get_json()
+    password = req_data['password']
+    email = req_data['email']
+
+    login_user = users.find_one({'email': email})
+
+    if login_user:
+        if sha256_crypt.verify(password, login_user['password']):
+            return {"status": True, "message": "login completed successfully"}
+
+    return {"status": False, "message": "login failed as password doesnt match the email"}

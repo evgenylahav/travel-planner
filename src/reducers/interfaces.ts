@@ -8,6 +8,7 @@ export interface ApplicationState {
   days: Day[];
   myItinerary: ItineraryDay[];
   myTrips: Trip[];
+  loggedIn: boolean;
 }
 
 export interface Trip {
@@ -55,4 +56,16 @@ export interface SaveItineraryRequest {
   timestamp: number;
   tripName: string;
   itinerary: ItineraryDay[];
+}
+
+export interface SignUpRequest {
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+}
+
+export interface LoginRequest {
+  email: string;
+  password: string;
 }

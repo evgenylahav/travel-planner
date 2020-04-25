@@ -15,4 +15,5 @@ export const INITIAL_STATE: ApplicationState = {
   days: [],
   myItinerary: [],
   myTrips: [],
+  loggedIn: false,
 };

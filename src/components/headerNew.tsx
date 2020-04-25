@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { Link } from "react-router-dom";
 import clsx from "clsx";
 import {
   makeStyles,
@@ -44,6 +45,7 @@ import { SaveItineraryRequest } from "../reducers/interfaces";
 import { RootState } from "../reducers";
 import { updateCurrentDay } from "../actions/daysActions";
 import { updateCurrentPlace } from "../actions/placesActions";
+import { updateLoggedIn } from "../actions/authActions";
 
 const drawerWidth = 240;
 
@@ -150,6 +152,9 @@ export default function HeaderNew() {
   const myItinerary = itinerary.myItinerary;
   const currentTrip = itinerary.currentTrip;
 
+  const auth = useSelector((state: RootState) => state.auth);
+  const loggedIn = auth.loggedIn;
+
   const handleDrawerOpen = () => {
     setOpen(true);
   };
@@ -245,6 +250,10 @@ export default function HeaderNew() {
       });
   };
 
+  const handleSignOut = () => {
+    dispatch(updateLoggedIn(false));
+  };
+
   return (
     <div className={classes.root}>
       <CssBaseline />
@@ -264,13 +273,44 @@ export default function HeaderNew() {
               [classes.hide]: open,
             })}
           >
-            <MenuIcon />
+            {loggedIn && <MenuIcon />}
           </IconButton>
           <Typography variant="h6" className={classes.title}>
             Travel Planner
           </Typography>
-          <Button color="inherit">Login</Button>
-          <Button color="inherit">Sign In</Button>
+          {!loggedIn && (
+            <Button
+              component={Link}
+              to="/login"
+              color="inherit"
+              style={{ marginRight: "10px" }}
+            >
+              Login
+            </Button>
+          )}
+          {!loggedIn && (
+            <Button
+              component={Link}
+              to="/signup"
+              color="inherit"
+              style={{ marginRight: "10px" }}
+            >
+              Sign Up
+            </Button>
+          )}
+          {loggedIn && (
+            <Button
+              component={Link}
+              to="/login"
+              color="inherit"
+              style={{ marginRight: "10px" }}
+              onClick={handleSignOut}
+            >
+              Sign Out
+            </Button>
+          )}
+          {/* <Button color="inherit">Login</Button> */}
+          {/* <Button color="inherit">Sign Up</Button> */}
         </Toolbar>
       </AppBar>
       <Drawer
