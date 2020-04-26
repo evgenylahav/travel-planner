@@ -5,28 +5,38 @@ from bson.json_util import dumps, loads
 
 main = Blueprint('main', __name__)
 
-
-@main.route('/')
-def index():
-    user_collections = mongo.db.users
-    user_collections.insert({'name': 'Kodon'})
-    return '<h1>Added a user<h1>'
-
-
+# generate data
 @main.route('/update_my_itinerary', methods=["POST"])
 def update_my_itinerary():
     try:
         req_data = request.get_json()
-        print(type(req_data))
 
-        for key, value in req_data.items():
-            print(key, value)
-
+        user = req_data['user']
         trip_name = req_data['tripName']
-        print(trip_name)
 
-        my_itinerary = mongo.db.my_itinerary
-        my_itinerary.replace_one({'tripName': trip_name}, req_data)
+        collection = mongo.db.users
+
+        user_db = mongo.db.users.find_one({"email": user['email']})
+
+        my_trips = user_db["my_trips"]
+
+        data = {"timestamp": req_data["timestamp"], "tripName": trip_name, "itinerary": req_data["itinerary"]}
+
+        new_my_trips = []
+
+        for trip in my_trips:
+            found = False
+            for key, value in trip.items():
+                if key == "tripName" and value == trip_name:
+                    new_my_trips.append(data)
+                    found = True
+
+            if not found:
+                new_my_trips.append(trip)
+
+        user_db["my_trips"] = new_my_trips
+
+        collection.replace_one({"email": user["email"]}, user_db)
 
         return {'message': "success"}
     except:
@@ -36,41 +46,73 @@ def update_my_itinerary():
 @main.route('/create_new_trip', methods=["POST"])
 def create_new_trip():
     req_data = request.get_json()
+
+    user = req_data['user']
     trip_name = req_data['tripName']
 
-    my_itinerary = mongo.db.my_itinerary
-    my_itinerary.delete_one({'tripName': trip_name})
-    my_itinerary.insert(req_data)
+    collection = mongo.db.users
 
-    return {'message': "succeeded"}
+    user_db = mongo.db.users.find_one({"email": user['email']})
+
+    my_trips = user_db["my_trips"]
+    data = {"timestamp": req_data["timestamp"], "tripName": trip_name, "itinerary": req_data["itinerary"]}
+
+    # insert handle if the trip exists
+    found = False
+    for trip in my_trips:
+        for key, value in trip.items():
+            if key == "tripName" and value == trip_name:
+                found = True
+
+    if not found:
+        my_trips.append(data)
+        user_db["my_trips"] = my_trips
+        collection.replace_one({"email": user["email"]}, user_db)
+        return {'message': "succeeded"}
+    else:
+        return {'message': "failed"}
 
 
-@main.route('/load_last_trip', methods=["GET"])
+# load data
+@main.route('/load_last_trip', methods=["POST"])
 def load_last_trip():
-    db = mongo.db.my_itinerary
-    cursor = db.find()
+    req_data = request.get_json()
+
+    user = req_data['user']
+
+    user_db = mongo.db.users.find_one({"email": user['email']})
+
+    my_trips = user_db["my_trips"]
 
     timestamps = []
-    for doc in cursor:
-        timestamps.append(doc['timestamp'])
+    for trip in my_trips:
+        timestamps.append(trip['timestamp'])
 
     last_trip_timestamp = max(timestamps)
 
-    response = db.find_one({"timestamp": last_trip_timestamp})
-    del response["_id"]
+    response = None
+    for trip in my_trips:
+        if trip['timestamp'] == last_trip_timestamp:
+            response = trip
+            break
+
     return dumps(response)
 
 
-@main.route('/get_all_trip_names', methods=["GET"])
+@main.route('/get_all_trip_names', methods=["POST"])
 def get_all_trip_names():
-    db = mongo.db.my_itinerary
-    cursor = db.find()
+    req_data = request.get_json()
+
+    user = req_data['user']
+
+    user_db = mongo.db.users.find_one({"email": user['email']})
+
+    my_trips = user_db["my_trips"]
 
     trip_names = []
-    for doc in cursor:
-        trip_names.append(doc['tripName'])
+    for trip in my_trips:
+        trip_names.append(trip['tripName'])
 
-    print(trip_names)
     all_trips = {"tripNames": trip_names}
 
     return dumps(all_trips)
@@ -79,15 +121,24 @@ def get_all_trip_names():
 @main.route('/load_itinerary', methods=["POST"])
 def load_itinerary():
     req_data = request.get_json()
+
+    user = req_data['user']
     trip_name = req_data['tripName']
 
-    db = mongo.db.my_itinerary
+    user_db = mongo.db.users.find_one({"email": user['email']})
 
-    response = db.find_one({'tripName': trip_name})
-    del response["_id"]
+    my_trips = user_db["my_trips"]
+
+    response = None
+    for trip in my_trips:
+        if trip['tripName'] == trip_name:
+            response = trip
+            break
+
     return dumps(response)
 
 
+# authentication
 @main.route('/register', methods=['POST'])
 def register():
 
@@ -103,12 +154,20 @@ def register():
 
     if existing_user is None:
         password = sha256_crypt.encrypt(password)
-        users.insert({'firstName': first_name,  'lastName': last_name, 'password': password, 'email': email})
+        users.insert({'firstName': first_name,
+                      'lastName': last_name,
+                      'password': password,
+                      'email': email,
+                      "my_trips": []})
         print("returning status success")
-        return {"status": True, "message": "Signup completed successfully"}
+        return {"status": True,
+                "user": {"firstName": first_name,
+                         "lastName": last_name,
+                         "email": email},
+                "message": "Signup completed successfully"}
 
     print("returning status failure")
-    return {"status": False, "message": "There is already an account for this email"}
+    return {"status": False, "user": None, "message": "There is already an account for this email"}
 
 
 @main.route('/login_to', methods=['POST'])
@@ -123,6 +182,12 @@ def login_to():
 
     if login_user:
         if sha256_crypt.verify(password, login_user['password']):
-            return {"status": True, "message": "login completed successfully"}
+            return {"status": True,
+                    "user": {"firstName": login_user['firstName'],
+                             "lastName": login_user['lastName'],
+                             "email": login_user['email']},
+                    "message": "login completed successfully"}
 
-    return {"status": False, "message": "login failed as password doesnt match the email"}
+    return {"status": False,
+            "user": None,
+            "message": "login failed as password doesnt match the email"}

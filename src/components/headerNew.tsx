@@ -105,6 +105,7 @@ export default function HeaderNew() {
   const currentTrip = itinerary.currentTrip;
 
   const auth = useSelector((state: RootState) => state.auth);
+  const user = auth.user;
   const loggedIn = auth.loggedIn;
 
   const handleDrawerOpen = () => {
@@ -128,7 +129,15 @@ export default function HeaderNew() {
   };
 
   const handleLoadLast = () => {
-    fetch("/load_last_trip")
+    const req = { user: user };
+    fetch("/load_last_trip", {
+      method: "post",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(req),
+    })
       .then((res: any) => res.json())
       .then((updatedItinerary: any) => {
         dispatch(updateItineraryFromServer(updatedItinerary.itinerary));
@@ -137,7 +146,15 @@ export default function HeaderNew() {
   };
 
   const handleGetAllTripsNamesFromDatabase = () => {
-    fetch("/get_all_trip_names")
+    const req = { user: user };
+    fetch("/get_all_trip_names", {
+      method: "post",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(req),
+    })
       .then((res: any) => res.json())
       .then((data) => {
         data.tripNames.unshift("");
@@ -151,6 +168,7 @@ export default function HeaderNew() {
       timestamp: Date.now(),
       tripName: currentTrip.tripName,
       itinerary: myItinerary,
+      user: user,
     };
     fetch("/update_my_itinerary", {
       method: "post",
@@ -170,6 +188,8 @@ export default function HeaderNew() {
   const handleSignOut = () => {
     dispatch(updateLoggedIn(false));
   };
+
+  console.log(user);
 
   return (
     <div className={classes.root}>
@@ -216,15 +236,23 @@ export default function HeaderNew() {
             </Button>
           )}
           {loggedIn && (
-            <Button
-              component={Link}
-              to="/login"
-              color="inherit"
-              style={{ marginRight: "10px" }}
-              onClick={handleSignOut}
-            >
-              Sign Out
-            </Button>
+            <span style={{ display: "flex" }}>
+              <Typography
+                variant="subtitle1"
+                style={{ alignSelf: "center", marginRight: "15px" }}
+              >
+                {`Hello, ${user.firstName}`}
+              </Typography>
+              <Button
+                component={Link}
+                to="/login"
+                color="inherit"
+                style={{ marginRight: "10px" }}
+                onClick={handleSignOut}
+              >
+                Sign Out
+              </Button>
+            </span>
           )}
         </Toolbar>
       </AppBar>

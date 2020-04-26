@@ -20,7 +20,10 @@ import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import { makeStyles } from "@material-ui/core/styles";
 
 import { LoginRequest } from "../../../reducers/interfaces";
-import { updateLoggedIn } from "../../../actions/authActions";
+import { updateLoggedIn, updateUser } from "../../../actions/authActions";
+import { resetCurrentTrip } from "../../../actions/tripsActons";
+import { resetCurrentPlace } from "../../../actions/placesActions";
+import { resetCurrentDay } from "../../../actions/daysActions";
 
 function Copyright() {
   return (
@@ -84,7 +87,19 @@ export default function Login() {
       .then((res: any) => res.json())
       .then((data) => {
         dispatch(updateLoggedIn(data.status));
-        history.push("/itinerary");
+        if (data.status) {
+          dispatch(
+            updateUser({
+              firstName: data.user.firstName,
+              lastName: data.user.lastName,
+              email: data.user.email,
+            })
+          );
+          dispatch(resetCurrentTrip());
+          dispatch(resetCurrentPlace());
+          dispatch(resetCurrentDay());
+          history.push("/itinerary");
+        }
       });
   };
 

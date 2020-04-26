@@ -52,6 +52,9 @@ export default function AddTrip(props: any) {
   const itinerary = useSelector((state: RootState) => state.itinerary);
   const myTrips = itinerary.myTrips;
 
+  const auth = useSelector((state: RootState) => state.auth);
+  const user = auth.user;
+
   const dispatch = useDispatch();
 
   const [tripName, setTripName] = useState("");
@@ -73,7 +76,7 @@ export default function AddTrip(props: any) {
 
     dispatch(updateItineraryFromServer([]));
 
-    dispatch(addTripToDB(tripName));
+    dispatch(addTripToDB(tripName, user));
 
     close();
   };

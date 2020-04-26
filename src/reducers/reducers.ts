@@ -16,4 +16,9 @@ export const INITIAL_STATE: ApplicationState = {
   myItinerary: [],
   myTrips: [],
   loggedIn: false,
+  user: {
+    firstName: "",
+    lastName: "",
+    email: "",
+  },
 };

@@ -1,6 +1,6 @@
 import { UPDATE_TRIPS, UPDATE_CURRENT_TRIP } from ".";
 import Redux from "redux";
-import { Trip, SaveItineraryRequest } from "../reducers/interfaces";
+import { Trip, SaveItineraryRequest, User } from "../reducers/interfaces";
 
 export const updateTrips = (trips: Trip[]) => {
   return {
@@ -9,19 +9,26 @@ export const updateTrips = (trips: Trip[]) => {
   };
 };
 
-export const updateCurrentTrip = (trip: Trip) => {
+export const updateCurrentTrip = (trip: Trip | null) => {
   return {
     type: UPDATE_CURRENT_TRIP,
     payload: trip,
   };
 };
 
-export const addTripToDB = (tripName: string) => {
+export const resetCurrentTrip = () => {
+  return (dispatch: Redux.Dispatch<any>) => {
+    dispatch(updateCurrentTrip(null));
+  };
+};
+
+export const addTripToDB = (tripName: string, user: User) => {
   return (dispatch: Redux.Dispatch<any>) => {
     const saveReq: SaveItineraryRequest = {
       timestamp: Date.now(),
       tripName: tripName,
       itinerary: [],
+      user: user,
     };
     return fetch("/create_new_trip", {
       method: "post",

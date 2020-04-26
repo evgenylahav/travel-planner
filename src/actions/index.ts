@@ -19,3 +19,4 @@ export const UPDATE_CURRENT_TRIP = "UPDATE_CURRENT_TRIP";
 
 // auth
 export const LOGGED_IN = "LOGGED_IN";
+export const USER = "USER";

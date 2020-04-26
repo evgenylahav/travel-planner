@@ -10,7 +10,7 @@ export const updateDays = (days: Day[]) => {
   };
 };
 
-export const updateCurrentDay = (day: Day) => {
+export const updateCurrentDay = (day: Day | null) => {
   return {
     type: UPDATE_CURRENT_DAY,
     payload: day,
@@ -29,4 +29,10 @@ export const updateDayAndPlace = (itineraryDay: ItineraryDay) => (
     const place = places[0];
     dispatch(updateCurrentPlace(place));
   }
+};
+
+export const resetCurrentDay = () => {
+  return (dispatch: Redux.Dispatch<any>) => {
+    dispatch(updateCurrentDay(null));
+  };
 };

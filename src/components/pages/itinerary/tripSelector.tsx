@@ -52,10 +52,11 @@ export default function TripSelector(props: any) {
 
   const dispatch = useDispatch();
 
-  const itinerary = useSelector((state: RootState) => state.itinerary);
+  const auth = useSelector((state: RootState) => state.auth);
+  const user = auth.user;
 
   const loadItineraryFromDB = (tripName: string) => {
-    const loadReq = { tripName: tripName };
+    const loadReq = { tripName: tripName, user: user };
     fetch("/load_itinerary", {
       method: "post",
       headers: {

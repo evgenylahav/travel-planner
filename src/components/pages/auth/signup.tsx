@@ -14,7 +14,10 @@ import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
 import { SignUpRequest } from "../../../reducers/interfaces";
-import { updateLoggedIn } from "../../../actions/authActions";
+import { updateLoggedIn, updateUser } from "../../../actions/authActions";
+import { resetCurrentTrip } from "../../../actions/tripsActons";
+import { resetCurrentPlace } from "../../../actions/placesActions";
+import { resetCurrentDay } from "../../../actions/daysActions";
 
 function Copyright() {
   return (
@@ -79,7 +82,19 @@ export default function SignUp() {
       .then((res: any) => res.json())
       .then((data) => {
         dispatch(updateLoggedIn(data.status));
-        history.push("/");
+        if (data.status) {
+          dispatch(
+            updateUser({
+              firstName: data.user.firstName,
+              lastName: data.user.lastName,
+              email: data.user.email,
+            })
+          );
+          dispatch(resetCurrentTrip());
+          dispatch(resetCurrentPlace());
+          dispatch(resetCurrentDay());
+          history.push("/itinerary");
+        }
       });
   };
 

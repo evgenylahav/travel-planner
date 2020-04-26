@@ -1,4 +1,5 @@
 import { UPDATE_PLACES, UPDATE_CURRENT_PLACE, UPDATE_FILTERED_PLACES } from ".";
+import Redux from "redux";
 import { Place } from "../reducers/interfaces";
 
 export const updatePlaces = (places: Place[]) => {
@@ -9,7 +10,7 @@ export const updatePlaces = (places: Place[]) => {
   };
 };
 
-export const updateCurrentPlace = (place: Place) => {
+export const updateCurrentPlace = (place: Place | null) => {
   return {
     type: UPDATE_CURRENT_PLACE,
     payload: place,
@@ -20,5 +21,11 @@ export const updateFilteredPlaces = (places: Place[]) => {
   return {
     type: UPDATE_FILTERED_PLACES,
     payload: places,
+  };
+};
+
+export const resetCurrentPlace = () => {
+  return (dispatch: Redux.Dispatch<any>) => {
+    dispatch(updateCurrentPlace(null));
   };
 };

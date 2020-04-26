@@ -40,6 +40,9 @@ export default function Configuration() {
   const config = useSelector((state: RootState) => state.config);
   const configRequest = config.request;
 
+  const auth = useSelector((state: RootState) => state.auth);
+  const user = auth.user;
+
   const handleUpdateTimeUnits = (timeUnits: string) => {
     setTimeUnits(timeUnits);
   };
@@ -123,7 +126,7 @@ export default function Configuration() {
     const currentTrip = { tripName: configRequest.tripName };
     console.log(currentTrip);
     dispatch(updateCurrentTrip(currentTrip));
-    dispatch(addTripToDB(currentTrip.tripName));
+    dispatch(addTripToDB(currentTrip.tripName, user));
   };
 
   const handleUpdateConfigurationRequest = (request: ConfigurationRequest) => {
