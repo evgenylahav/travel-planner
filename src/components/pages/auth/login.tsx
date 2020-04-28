@@ -24,6 +24,7 @@ import { updateLoggedIn, updateUser } from "../../../actions/authActions";
 import { resetCurrentTrip } from "../../../actions/tripsActons";
 import { resetCurrentPlace } from "../../../actions/placesActions";
 import { resetCurrentDay } from "../../../actions/daysActions";
+import { setSessionCookie } from "../../session";
 
 function Copyright() {
   return (
@@ -87,17 +88,17 @@ export default function Login() {
       .then((res: any) => res.json())
       .then((data) => {
         dispatch(updateLoggedIn(data.status));
+        const user = {
+          firstName: data.user.firstName,
+          lastName: data.user.lastName,
+          email: data.user.email,
+        };
         if (data.status) {
-          dispatch(
-            updateUser({
-              firstName: data.user.firstName,
-              lastName: data.user.lastName,
-              email: data.user.email,
-            })
-          );
+          dispatch(updateUser(user));
           dispatch(resetCurrentTrip());
           dispatch(resetCurrentPlace());
           dispatch(resetCurrentDay());
+          setSessionCookie({ user: user });
           history.push("/itinerary");
         }
       });

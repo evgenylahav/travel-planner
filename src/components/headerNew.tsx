@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
+
 import clsx from "clsx";
 import { makeStyles, Theme, createStyles } from "@material-ui/core/styles";
 import {
@@ -25,6 +26,7 @@ import { SaveItineraryRequest } from "../reducers/interfaces";
 import { RootState } from "../reducers";
 import { updateLoggedIn } from "../actions/authActions";
 import ActionsDrawer from "./actionsDrawer";
+import { SessionContext } from "./session";
 
 const drawerWidth = 240;
 
@@ -99,14 +101,18 @@ export default function HeaderNew() {
   >("success");
 
   const dispatch = useDispatch();
+  // let history = useHistory();
+  const session = useContext(SessionContext);
+  const loggedIn = session.user !== undefined;
+  const user = session.user;
 
   const itinerary = useSelector((state: RootState) => state.itinerary);
   const myItinerary = itinerary.myItinerary;
   const currentTrip = itinerary.currentTrip;
 
-  const auth = useSelector((state: RootState) => state.auth);
-  const user = auth.user;
-  const loggedIn = auth.loggedIn;
+  // const auth = useSelector((state: RootState) => state.auth);
+  // const user = auth.user;
+  // const loggedIn = auth.loggedIn;
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -245,10 +251,9 @@ export default function HeaderNew() {
               </Typography>
               <Button
                 component={Link}
-                to="/login"
+                to="/logout"
                 color="inherit"
                 style={{ marginRight: "10px" }}
-                onClick={handleSignOut}
               >
                 Sign Out
               </Button>

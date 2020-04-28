@@ -1,9 +1,18 @@
-import React from "react";
+import React, { useContext } from "react";
+import { useHistory } from "react-router-dom";
+
 import { ItineraryDetails } from "./itineraryDetails";
 import { WrappedMap } from "./wrappedMap";
 import Box from "@material-ui/core/Box";
+import { SessionContext } from "../../session";
 
 export default function Itinerary() {
+  const history = useHistory();
+  const session = useContext(SessionContext);
+  if (session.user === undefined) {
+    history.push("/login");
+  }
+
   return (
     <div style={{ display: "grid", gridTemplateColumns: "3fr 4fr" }}>
       <ItineraryDetails />

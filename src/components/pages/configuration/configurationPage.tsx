@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import {
   Stepper,
   Step,
@@ -29,10 +29,17 @@ import { updateDays } from "../../../actions/daysActions";
 import { updateItinerary } from "../../../actions/itineraryActions";
 import { RootState } from "../../../reducers";
 import { addTripToDB, updateCurrentTrip } from "../../../actions/tripsActons";
+import { SessionContext } from "../../session";
 
 const classes = require("./configurationPage.scss");
 
 export default function Configuration() {
+  const history = useHistory();
+  const session = useContext(SessionContext);
+  if (session.user === undefined) {
+    history.push("/login");
+  }
+
   const [activeStep, setActiveStep] = useState(0);
   const [timeUnits, setTimeUnits] = useState("days");
 
