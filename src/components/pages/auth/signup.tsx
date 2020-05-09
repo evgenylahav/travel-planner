@@ -1,20 +1,23 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { Link as RouterLink, useHistory } from "react-router-dom";
+import { setSessionCookie } from "../../session";
 
-import Avatar from "@material-ui/core/Avatar";
-import Button from "@material-ui/core/Button";
-import CssBaseline from "@material-ui/core/CssBaseline";
-import TextField from "@material-ui/core/TextField";
-import Link from "@material-ui/core/Link";
-import Grid from "@material-ui/core/Grid";
-import Box from "@material-ui/core/Box";
+import {
+  Avatar,
+  Button,
+  CssBaseline,
+  TextField,
+  Link,
+  Grid,
+  Box,
+  Container,
+  Typography,
+} from "@material-ui/core/";
+
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
-import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
-import Container from "@material-ui/core/Container";
 import { SignUpRequest } from "../../../reducers/interfaces";
-import { updateLoggedIn, updateUser } from "../../../actions/authActions";
 import { resetCurrentTrip } from "../../../actions/tripsActons";
 import { resetCurrentPlace } from "../../../actions/placesActions";
 import { resetCurrentDay } from "../../../actions/daysActions";
@@ -81,19 +84,19 @@ export default function SignUp() {
     })
       .then((res: any) => res.json())
       .then((data) => {
-        dispatch(updateLoggedIn(data.status));
+        const user = {
+          firstName: data.user.firstName,
+          lastName: data.user.lastName,
+          email: data.user.email,
+        };
         if (data.status) {
-          dispatch(
-            updateUser({
-              firstName: data.user.firstName,
-              lastName: data.user.lastName,
-              email: data.user.email,
-            })
-          );
           dispatch(resetCurrentTrip());
           dispatch(resetCurrentPlace());
           dispatch(resetCurrentDay());
+          setSessionCookie({ user: user });
           history.push("/itinerary");
+        } else {
+          history.push("/login");
         }
       });
   };

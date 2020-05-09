@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { useDispatch } from "react-redux";
 import { Link as RouterLink, useHistory } from "react-router-dom";
 
@@ -20,11 +20,11 @@ import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import { makeStyles } from "@material-ui/core/styles";
 
 import { LoginRequest } from "../../../reducers/interfaces";
-import { updateLoggedIn, updateUser } from "../../../actions/authActions";
 import { resetCurrentTrip } from "../../../actions/tripsActons";
 import { resetCurrentPlace } from "../../../actions/placesActions";
 import { resetCurrentDay } from "../../../actions/daysActions";
-import { setSessionCookie } from "../../session";
+import { setSessionCookie, SessionContext } from "../../session";
+import { updateLoggedIn } from "../../../actions/authActions";
 
 function Copyright() {
   return (
@@ -61,8 +61,12 @@ const useStyles = makeStyles((theme) => ({
 
 export default function Login() {
   const classes = useStyles();
+  const history = useHistory();
 
-  let history = useHistory();
+  const session = useContext(SessionContext);
+  if (session.user !== undefined) {
+    history.push("/itinerary");
+  }
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -87,19 +91,21 @@ export default function Login() {
     })
       .then((res: any) => res.json())
       .then((data) => {
-        dispatch(updateLoggedIn(data.status));
         const user = {
           firstName: data.user.firstName,
           lastName: data.user.lastName,
           email: data.user.email,
         };
         if (data.status) {
-          dispatch(updateUser(user));
           dispatch(resetCurrentTrip());
           dispatch(resetCurrentPlace());
           dispatch(resetCurrentDay());
           setSessionCookie({ user: user });
+          // dispatch(updateLoggedIn(true));
           history.push("/itinerary");
+        } else {
+          dispatch(updateLoggedIn(false));
+          history.push("/login");
         }
       });
   };
@@ -114,7 +120,7 @@ export default function Login() {
         <Typography component="h1" variant="h5">
           Login
         </Typography>
-        {/* <form className={classes.form} noValidate> */}
+
         <TextField
           variant="outlined"
           margin="normal"
@@ -166,7 +172,6 @@ export default function Login() {
             </Link>
           </Grid>
         </Grid>
-        {/* </form> */}
       </div>
       <Box mt={8}>
         <Copyright />

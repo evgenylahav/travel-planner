@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import { useSelector, useDispatch } from "react-redux";
 
 import Draggable from "react-draggable";
@@ -17,6 +17,7 @@ import { RootState } from "../../../reducers";
 import { Trip, ItineraryDay } from "../../../reducers/interfaces";
 import { updateCurrentTrip } from "../../../actions/tripsActons";
 import { updateItineraryFromServer } from "../../../actions/itineraryActions";
+import { SessionContext } from "../../session";
 
 function PaperComponent(props: any) {
   return (
@@ -52,8 +53,11 @@ export default function TripSelector(props: any) {
 
   const dispatch = useDispatch();
 
-  const auth = useSelector((state: RootState) => state.auth);
-  const user = auth.user;
+  // const auth = useSelector((state: RootState) => state.auth);
+  // const user = auth.user;
+
+  const session = useContext(SessionContext);
+  const user = session.user;
 
   const loadItineraryFromDB = (tripName: string) => {
     const loadReq = { tripName: tripName, user: user };

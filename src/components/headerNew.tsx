@@ -1,6 +1,7 @@
 import React, { useState, useContext } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Link, useHistory } from "react-router-dom";
+import Cookies from "js-cookie";
 
 import clsx from "clsx";
 import { makeStyles, Theme, createStyles } from "@material-ui/core/styles";
@@ -24,11 +25,11 @@ import { updateCurrentTrip } from "../actions/tripsActons";
 import TripSelector from "../components/pages/itinerary/tripSelector";
 import { SaveItineraryRequest } from "../reducers/interfaces";
 import { RootState } from "../reducers";
-import { updateLoggedIn } from "../actions/authActions";
 import ActionsDrawer from "./actionsDrawer";
 import { SessionContext } from "./session";
+import { updateLoggedIn } from "../actions/authActions";
 
-const drawerWidth = 240;
+const drawerWidth = 280;
 
 function Alert(props: AlertProps) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
@@ -101,10 +102,14 @@ export default function HeaderNew() {
   >("success");
 
   const dispatch = useDispatch();
-  // let history = useHistory();
+  const history = useHistory();
   const session = useContext(SessionContext);
-  const loggedIn = session.user !== undefined;
+  // const loggedIn = session.user !== undefined;
   const user = session.user;
+  console.log(user);
+
+  const auth = useSelector((state: RootState) => state.auth);
+  const loggedIn = auth.loggedIn;
 
   const itinerary = useSelector((state: RootState) => state.itinerary);
   const myItinerary = itinerary.myItinerary;
@@ -191,11 +196,15 @@ export default function HeaderNew() {
       });
   };
 
-  const handleSignOut = () => {
+  const handleLogout = () => {
+    console.log("logging out...");
     dispatch(updateLoggedIn(false));
+    Cookies.remove("session");
+    history.push("/login");
   };
 
   console.log(user);
+  console.log(loggedIn);
 
   return (
     <div className={classes.root}>
@@ -250,8 +259,7 @@ export default function HeaderNew() {
                 {`Hello, ${user.firstName}`}
               </Typography>
               <Button
-                component={Link}
-                to="/logout"
+                onClick={handleLogout}
                 color="inherit"
                 style={{ marginRight: "10px" }}
               >

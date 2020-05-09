@@ -47,8 +47,10 @@ export default function Configuration() {
   const config = useSelector((state: RootState) => state.config);
   const configRequest = config.request;
 
-  const auth = useSelector((state: RootState) => state.auth);
-  const user = auth.user;
+  // const auth = useSelector((state: RootState) => state.auth);
+  // const user = auth.user;
+
+  const user = session.user;
 
   const handleUpdateTimeUnits = (timeUnits: string) => {
     setTimeUnits(timeUnits);

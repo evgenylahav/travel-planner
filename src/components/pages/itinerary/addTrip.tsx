@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { makeStyles } from "@material-ui/core/styles";
 
@@ -24,6 +24,7 @@ import {
   updateItinerary,
   updateItineraryFromServer,
 } from "../../../actions/itineraryActions";
+import { SessionContext } from "../../session";
 
 function PaperComponent(props: any) {
   return (
@@ -52,8 +53,11 @@ export default function AddTrip(props: any) {
   const itinerary = useSelector((state: RootState) => state.itinerary);
   const myTrips = itinerary.myTrips;
 
-  const auth = useSelector((state: RootState) => state.auth);
-  const user = auth.user;
+  // const auth = useSelector((state: RootState) => state.auth);
+  // const user = auth.user;
+
+  const session = useContext(SessionContext);
+  const user = session.user;
 
   const dispatch = useDispatch();
 

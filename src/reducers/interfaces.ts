@@ -9,7 +9,6 @@ export interface ApplicationState {
   myItinerary: ItineraryDay[];
   myTrips: Trip[];
   loggedIn: boolean;
-  user: User;
 }
 
 export interface Trip {

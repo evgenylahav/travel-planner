@@ -1,4 +1,4 @@
-import { LOGGED_IN, USER } from "../actions";
+import { LOGGED_IN } from "../actions";
 import { INITIAL_STATE } from "./reducers";
 
 export default (state = INITIAL_STATE, action: any) => {
@@ -7,12 +7,6 @@ export default (state = INITIAL_STATE, action: any) => {
       return {
         ...state,
         loggedIn: action.payload,
-      };
-    }
-    case USER: {
-      return {
-        ...state,
-        user: action.payload,
       };
     }
     default:
